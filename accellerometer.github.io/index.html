@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Accelerometer Sensor</title>  
+  <h1>Accelerometer Sensor</h1>
+  <button onclick="sensori()">Start</button>
+  <br/>
+  <link rel="stylesheet" href="main.css" type="text/css" media="screen, projection"
+  
+  
+  <h1></h1>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="Migliore Alessandro">
+  <meta charset="UTF-8">
+</head>
+<table id="myTable"><!--  creation of the first table -->
+  <tr> <!--  the first row is compsed by the following attributes-->
+
+  <th>X</th>
+  <th>Y</th>
+  <th>Z</th>
+  </tr>
+
+  <tr>  <!-- here I initialize an empty row that I will edit every time the telemetries update-->
+    <td>NO DATA</td>
+    <td>NO DATA</td>
+    <td>NO DATA</td>
+
+</tr>
+
+<body>
+
+  <br>
+		<div id="ip" style="font-size : 30px">IP</div>
+  <br>
+  
+  <div id="status">Click start and take a look to your sensors</div>
+  <div id="statusx">Movement x-axis</div>
+  <div id="statusy">Movement y-axis</div>
+  <div id="statusz">Movement z-axis</div>
+  <div id="movimento">Awaiting the sensors...</div>
+  <br>
+  <div id="mediax">I’m waiting for the X average...</div>
+  <div id="mediay">I’m waiting for the Y average...</div>
+  <div id="mediaz">I’m waiting for the Z average...</div>
+  <div id="media">Signal Magnitude Area: </div>
+  <div id="movement">Awaiting the measurements... </div>
+  
+
+
+
+  <script>
+    
+    function sensori() {
+    var cont=-1;
+    var arrayx = [];
+    var arrayy = [];
+    var arrayz = [];
+    var a=[];
+    var b=[];
+    var c=[];
+    let status = document.getElementById('status');
+    
+    //document.getElementById('status').innerHTML = array[9];
+    
+    if ( 'Accelerometer' in window ) {
+      var sensor = new Accelerometer({frequency: 1});
+		
+      sensor.addEventListener('reading', () => {
+      cont++;
+      document.getElementById('status').innerHTML = cont;
+      arrayx[cont] = sensor.x;
+      arrayy[cont] = sensor.y;
+      arrayz[cont] = sensor.z;
+      if (cont !=0)  //calculating length of the acceleration vector
+      {
+        a[cont-1] = arrayx[cont] - arrayx[cont-1];
+        b[cont-1] = arrayy[cont] - arrayy[cont-1];
+        c[cont-1] = arrayz[cont] - arrayz[cont-1];
+        
+        document.getElementById('statusx').innerHTML = "Movement x-axis: " + a[cont-1].toFixed(10);  //the difference between the new value of the x sensor and the old value
+        document.getElementById('statusy').innerHTML = "Movement y-axis: " + b[cont-1].toFixed(10);	// SAME FOR Y
+        document.getElementById('statusz').innerHTML = "Movement z-axis: " + c[cont-1].toFixed(10);
+
+        if (a[cont-1] > 1 || b[cont-1] > 1 || c[cont-1] > 1 )  //if the difference is high it has just moved
+          document.getElementById('movimento').innerHTML = "I'm moving";
+        else
+          document.getElementById('movimento').innerHTML = "I'm not moving";
+      
+        var num=0;
+        var tempo = 10;
+        if (cont % tempo == 0)
+        {
+          num = (cont/tempo);  //now use SMA
+          for (var j=0,somm=0,sommx=0,sommy=0,sommz=0; j<tempo; j++)
+          {
+            sommx += Math.abs(a[j+ (tempo*(num-1))]);
+            sommy += Math.abs(b[j+ (tempo*(num-1))]);
+            sommz += Math.abs(c[j+ (tempo*(num-1))]);
+          }
+          var SMA = Math.abs(sommx/tempo) + Math.abs(sommy/tempo) + Math.abs(sommz/tempo);
+          var trsh = 0.5;  //if the vector is less then a threshold (0.5) the user is sitting or standing instead if the vector length is more then a threshold the user is walking
+          document.getElementById('mediax').innerHTML = "X average: " + (sommx/tempo) + " con cont: " + cont + " con num: " + num;
+          document.getElementById('mediay').innerHTML = "Y average: " + (sommy/tempo);
+          document.getElementById('mediaz').innerHTML = "Z average: " + (sommz/tempo);
+          document.getElementById('media').innerHTML = "Signal Magnitude Area: " + SMA;
+
+
+          if (SMA > trsh)
+            document.getElementById('movement').innerHTML = "I'm moving";
+          
+          else
+            document.getElementById('movement').innerHTML = "I'm not moving";
+          
+        }
+        var table = document.getElementById("myTable");
+        table.rows[1].cells[0].innerHTML = sensor.x.toFixed(10);  //in this way I add in each cell of the row sensor's data
+        table.rows[1].cells[1].innerHTML = sensor.y.toFixed(10);
+        table.rows[1].cells[2].innerHTML = sensor.z.toFixed(10);
+        
+       var xhttp3 = new XMLHttpRequest(); //link to thingsboard  
+			xhttp3.open('POST', 'https://cloud.thingsboard.io/api/plugins/telemetry/DEVICE/8d719fc0-99ac-11ea-9bb0-1b13925592ac/timeseries/SERVER_SCOPE');
+			xhttp3.setRequestHeader('Content-Type', 'application/json');
+			xhttp3.setRequestHeader('X-Authorization', 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJpbHByb2Npb25lY2lhazk0QGdtYWlsLmNvbSIsInNjb3BlcyI6WyJURU5BTlRfQURNSU4iXSwidXNlcklkIjoiNDk0MDBiMjAtOTlhYy0xMWVhLTliYjAtMWIxMzkyNTU5MmFjIiwiZmlyc3ROYW1lIjoiQWxlc3NhbmRybyIsImxhc3ROYW1lIjoiTWlnbGlvcmUiLCJlbmFibGVkIjp0cnVlLCJwcml2YWN5UG9saWN5QWNjZXB0ZWQiOnRydWUsImlzUHVibGljIjpmYWxzZSwidGVuYW50SWQiOiI0OTEyMWQ1MC05OWFjLTExZWEtOWJiMC0xYjEzOTI1NTkyYWMiLCJjdXN0b21lcklkIjoiMTM4MTQwMDAtMWRkMi0xMWIyLTgwODAtODA4MDgwODA4MDgwIiwiaXNzIjoiY2xvdWQudGhpbmdzYm9hcmQuaW8iLCJpYXQiOjE1ODk4ODQ5NDgsImV4cCI6MTU5MTY4NDk0OH0.Xjqc4MZ2w5HW5ZC6qCmu_6ziKMIZIszObR7uO7bubhJx46j0dKnxZxLaxGSeasuJ_3TT_qHbl6AcCK1BH3Rveg');
+			
+        xhttp3.send('{"axis":' + sensor.x.toFixed(10) +  ', "mov":' + Math.abs(a[cont-1].toFixed(10)) +  "}");
+
+        var xhttp3 = new XMLHttpRequest();
+			xhttp3.open('POST', 'https://cloud.thingsboard.io/api/plugins/telemetry/DEVICE/942ad0c0-99ac-11ea-9bb0-1b13925592ac/timeseries/SERVER_SCOPE');
+			xhttp3.setRequestHeader('Content-Type', 'application/json');
+			xhttp3.setRequestHeader('X-Authorization', 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJpbHByb2Npb25lY2lhazk0QGdtYWlsLmNvbSIsInNjb3BlcyI6WyJURU5BTlRfQURNSU4iXSwidXNlcklkIjoiNDk0MDBiMjAtOTlhYy0xMWVhLTliYjAtMWIxMzkyNTU5MmFjIiwiZmlyc3ROYW1lIjoiQWxlc3NhbmRybyIsImxhc3ROYW1lIjoiTWlnbGlvcmUiLCJlbmFibGVkIjp0cnVlLCJwcml2YWN5UG9saWN5QWNjZXB0ZWQiOnRydWUsImlzUHVibGljIjpmYWxzZSwidGVuYW50SWQiOiI0OTEyMWQ1MC05OWFjLTExZWEtOWJiMC0xYjEzOTI1NTkyYWMiLCJjdXN0b21lcklkIjoiMTM4MTQwMDAtMWRkMi0xMWIyLTgwODAtODA4MDgwODA4MDgwIiwiaXNzIjoiY2xvdWQudGhpbmdzYm9hcmQuaW8iLCJpYXQiOjE1ODk4ODQ5NDgsImV4cCI6MTU5MTY4NDk0OH0.Xjqc4MZ2w5HW5ZC6qCmu_6ziKMIZIszObR7uO7bubhJx46j0dKnxZxLaxGSeasuJ_3TT_qHbl6AcCK1BH3Rveg');
+			
+        xhttp3.send('{"axis":' + sensor.y.toFixed(10) +  ', "mov":' + Math.abs(b[cont-1].toFixed(10)) +  "}");
+
+        var xhttp3 = new XMLHttpRequest();
+			xhttp3.open('POST', 'https://cloud.thingsboard.io/api/plugins/telemetry/DEVICE/98ff1520-99ac-11ea-9bb0-1b13925592ac/timeseries/SERVER_SCOPE');
+			xhttp3.setRequestHeader('Content-Type', 'application/json');
+			xhttp3.setRequestHeader('X-Authorization', 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJpbHByb2Npb25lY2lhazk0QGdtYWlsLmNvbSIsInNjb3BlcyI6WyJURU5BTlRfQURNSU4iXSwidXNlcklkIjoiNDk0MDBiMjAtOTlhYy0xMWVhLTliYjAtMWIxMzkyNTU5MmFjIiwiZmlyc3ROYW1lIjoiQWxlc3NhbmRybyIsImxhc3ROYW1lIjoiTWlnbGlvcmUiLCJlbmFibGVkIjp0cnVlLCJwcml2YWN5UG9saWN5QWNjZXB0ZWQiOnRydWUsImlzUHVibGljIjpmYWxzZSwidGVuYW50SWQiOiI0OTEyMWQ1MC05OWFjLTExZWEtOWJiMC0xYjEzOTI1NTkyYWMiLCJjdXN0b21lcklkIjoiMTM4MTQwMDAtMWRkMi0xMWIyLTgwODAtODA4MDgwODA4MDgwIiwiaXNzIjoiY2xvdWQudGhpbmdzYm9hcmQuaW8iLCJpYXQiOjE1ODk4ODQ5NDgsImV4cCI6MTU5MTY4NDk0OH0.Xjqc4MZ2w5HW5ZC6qCmu_6ziKMIZIszObR7uO7bubhJx46j0dKnxZxLaxGSeasuJ_3TT_qHbl6AcCK1BH3Rveg');
+			
+        xhttp3.send('{"axis":' + sensor.z.toFixed(10) +  ', "mov":' + Math.abs(c[cont-1].toFixed(10)) +  "}");
+        //document.getElementById('status').innerHTML = array[1];
+      
+      
+      
+      }
+
+      
+      
+      });
+
+      sensor.start();
+    }
+    else status.innerHTML = 'Accelerometer not supported';
+    }
+  </script>
+<script type="application/javascript">
+    function getIP(json) {
+      document.getElementById("ip").innerHTML = "IP: "+json.ip;
+    }
+    </script>
+  
+    <script type="application/javascript" src="https://api.ipify.org?format=jsonp&callback=getIP"></script>
+</body>
+</html>

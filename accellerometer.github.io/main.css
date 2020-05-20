@@ -1,0 +1,31 @@
+table {
+    border-collapse: collapse;
+}
+
+table th{
+    text-align: center;
+    background-color: #3a6070;
+    color: #FFF;
+    padding: 15px 30px 15px 8px;
+}
+
+table td{
+	text-align: center;
+    boder: 1px solid #e3e3e3;
+    padding: 15px 8px;
+}
+
+table tr:nth-child(odd) td{
+    background-color: #afeeee;
+}
+
+table tr:nth-child(even) td{
+    background-color: #FFF;
+}
+
+
+body {
+ background-image: url("immagineback.jpg");
+ background-color: #cccccc;
+ background-size: cover;
+}
