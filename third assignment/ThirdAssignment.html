@@ -1,0 +1,2886 @@
+<head>
+
+    <title>Third Assignment</title>
+
+    <link rel="stylesheet" href="main.css" type="text/css" media="screen, projection"
+</head>
+<html>
+<head>
+
+ <script type="text/javascript">
+
+	var i = 0;
+	var temp = [];
+		//Websocket API duplicates REST API functionality and provides the ability to subscribe to device data changes.
+
+        function Device1Live() {
+            var token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYW5kcm8ubWlnbGlvcmU5NEBnbWFpbC5jb20iLCJzY29wZXMiOlsiVEVOQU5UX0FETUlOIl0sInVzZXJJZCI6IjAzN2RiMjAwLTY5NTQtMTFlYS1hNjhiLTdkMGVmMmE2ODJkMyIsImZpcnN0TmFtZSI6IkFsZXNzYW5kcm8iLCJsYXN0TmFtZSI6Ik1pZ2xpb3JlIiwiZW5hYmxlZCI6dHJ1ZSwicHJpdmFjeVBvbGljeUFjY2VwdGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMDM2ZmNmNTAtNjk1NC0xMWVhLWE2OGItN2QwZWYyYTY4MmQzIiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCIsImlzcyI6InRoaW5nc2JvYXJkLmlvIiwiaWF0IjoxNTg2NDM2NDY3LCJleHAiOjE1ODgyMzY0Njd9.gQLfSGaMvXkrjkBkYehrRZ4EEjRueFVuf1wjj6iz64eLYEsyv3qjK3-AQy8-Af8cUmObxvc6ytWcacVZ2bMxVw";
+            var entityId = "0cb57790-6954-11ea-9cdd-b3576b7d39f1";
+            var webSocket = new WebSocket("wss://demo.thingsboard.io/api/ws/plugins/telemetry?token=" + token);
+			
+            webSocket.onopen = function () {
+                var object = {
+                    tsSubCmds: [
+                        {
+                            entityType: "DEVICE",
+                            entityId: entityId,
+                                                       
+                            scope: "LATEST_TELEMETRY",
+                            cmdId: 10
+                        }
+                    ],
+                    historyCmds: [],
+                    attrSubCmds: []
+                };
+                var data = JSON.stringify(object);
+                webSocket.send(data);
+                
+                
+            };
+			//receive telemetry data 
+            webSocket.onmessage = function (event) {
+                var received_msg = event.data;
+                var msg=JSON.parse(event.data);
+                var buttonStop = document.getElementById("stop1");  //if click button stop , device stops showing data
+
+				buttonStop.onclick = function() {
+				// Close the connection, if open.
+				if (webSocket.readyState === WebSocket.OPEN) {
+				webSocket.close();
+				}
+			}
+                
+				
+				//publish the live data of the sensors
+                document.getElementById("tp").innerHTML =("TEMPERATURE: " + msg.data.temperature[0][1]+ "°");
+                document.getElementById("humidity").innerHTML =("HUMIDITY: " + msg.data.humidity[0][1]+ " %");
+                document.getElementById("wd").innerHTML =("WIND DIRECTION: " + msg.data.windDirection[0][1]+ "°");
+                document.getElementById("wi").innerHTML =("WIND INTENSITY: " + msg.data.windIntensity[0][1]+ " m/s");
+                document.getElementById("rh").innerHTML =("RAIN HEIGHT: " + msg.data.rainHeight[0][1]+ " mm/h");
+                
+            };
+
+           
+            
+            
+        }
+    </script>
+    
+    
+    <script type="text/javascript">
+
+	var i = 0;
+	var temp = [];
+
+		//Device 2 has the same code as device 1 but changes the entityId
+        function Device2Live() {
+            var token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYW5kcm8ubWlnbGlvcmU5NEBnbWFpbC5jb20iLCJzY29wZXMiOlsiVEVOQU5UX0FETUlOIl0sInVzZXJJZCI6IjAzN2RiMjAwLTY5NTQtMTFlYS1hNjhiLTdkMGVmMmE2ODJkMyIsImZpcnN0TmFtZSI6IkFsZXNzYW5kcm8iLCJsYXN0TmFtZSI6Ik1pZ2xpb3JlIiwiZW5hYmxlZCI6dHJ1ZSwicHJpdmFjeVBvbGljeUFjY2VwdGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMDM2ZmNmNTAtNjk1NC0xMWVhLWE2OGItN2QwZWYyYTY4MmQzIiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCIsImlzcyI6InRoaW5nc2JvYXJkLmlvIiwiaWF0IjoxNTg2NDM2NDY3LCJleHAiOjE1ODgyMzY0Njd9.gQLfSGaMvXkrjkBkYehrRZ4EEjRueFVuf1wjj6iz64eLYEsyv3qjK3-AQy8-Af8cUmObxvc6ytWcacVZ2bMxVw";
+            var entityId = "0cb80fa0-6954-11ea-9cdd-b3576b7d39f1";
+            var webSocket = new WebSocket("wss://demo.thingsboard.io/api/ws/plugins/telemetry?token=" + token);
+
+            webSocket.onopen = function () {
+                var object = {
+                    tsSubCmds: [
+                        {
+                            entityType: "DEVICE",
+                            entityId: entityId,
+                                                       
+                            scope: "LATEST_TELEMETRY",
+                            cmdId: 10
+                        }
+                    ],
+                    historyCmds: [],
+                    attrSubCmds: []
+                };
+                var data = JSON.stringify(object);
+                webSocket.send(data);
+                
+                
+            };
+
+            webSocket.onmessage = function (event) {
+                var received_msg = event.data;
+                var msg=JSON.parse(event.data);
+                var buttonStop = document.getElementById("stop2");		//if click button stop , device stops showing data
+
+				buttonStop.onclick = function() {
+				// Close the connection, if open.
+				if (webSocket.readyState === WebSocket.OPEN) {
+				webSocket.close();
+				}
+			}
+				//publish the live data of the sensors
+                document.getElementById("tp2").innerHTML =("TEMPERATURE: " + msg.data.temperature[0][1]+ "°");
+                document.getElementById("humidity2").innerHTML =("HUMIDITY: " + msg.data.humidity[0][1]+ " %");
+                document.getElementById("wd2").innerHTML =("WIND DIRECTION: " + msg.data.windDirection[0][1]+ "°");
+                document.getElementById("wi2").innerHTML =("WIND INTENSITY: " + msg.data.windIntensity[0][1]+ " m/s");
+                document.getElementById("rh2").innerHTML =("RAIN HEIGHT: " + msg.data.rainHeight[0][1]+ " mm/h");
+            };
+
+            
+            
+            
+            
+        }
+        
+    </script>
+
+ <script type="text/javascript">
+
+	var i = 0;
+	var temp = [];
+
+		//Device 2 has the same code as device 1 but changes the entityId
+        function Device3Live() {
+            var token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYW5kcm8ubWlnbGlvcmU5NEBnbWFpbC5jb20iLCJzY29wZXMiOlsiVEVOQU5UX0FETUlOIl0sInVzZXJJZCI6IjAzN2RiMjAwLTY5NTQtMTFlYS1hNjhiLTdkMGVmMmE2ODJkMyIsImZpcnN0TmFtZSI6IkFsZXNzYW5kcm8iLCJsYXN0TmFtZSI6Ik1pZ2xpb3JlIiwiZW5hYmxlZCI6dHJ1ZSwicHJpdmFjeVBvbGljeUFjY2VwdGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMDM2ZmNmNTAtNjk1NC0xMWVhLWE2OGItN2QwZWYyYTY4MmQzIiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCIsImlzcyI6InRoaW5nc2JvYXJkLmlvIiwiaWF0IjoxNTg2NDM2NDY3LCJleHAiOjE1ODgyMzY0Njd9.gQLfSGaMvXkrjkBkYehrRZ4EEjRueFVuf1wjj6iz64eLYEsyv3qjK3-AQy8-Af8cUmObxvc6ytWcacVZ2bMxVw";
+            var entityId = "fbe5d470-70e0-11ea-ad02-b3576b7d39f1";
+            var webSocket = new WebSocket("wss://demo.thingsboard.io/api/ws/plugins/telemetry?token=" + token);
+
+            webSocket.onopen = function () {
+                var object = {
+                    tsSubCmds: [
+                        {
+                            entityType: "DEVICE",
+                            entityId: entityId,
+                                                       
+                            scope: "LATEST_TELEMETRY",
+                            cmdId: 10
+                        }
+                    ],
+                    historyCmds: [],
+                    attrSubCmds: []
+                };
+                var data = JSON.stringify(object);
+                webSocket.send(data);
+                
+                
+            };
+
+            webSocket.onmessage = function (event) {
+                var received_msg = event.data;
+                var msg=JSON.parse(event.data);
+                var buttonStop = document.getElementById("stop3");		//if click button stop , device stops showing data
+
+				buttonStop.onclick = function() {
+				// Close the connection, if open.
+				if (webSocket.readyState === WebSocket.OPEN) {
+				webSocket.close();
+				}
+			}
+				//publish the live data of the sensors
+                document.getElementById("tp3").innerHTML =("TEMPERATURE: " + msg.data.temperature[0][1]+ "°");
+                document.getElementById("humidity3").innerHTML =("HUMIDITY: " + msg.data.humidity[0][1]+ " %");
+                document.getElementById("wd3").innerHTML =("WIND DIRECTION: " + msg.data.windDirection[0][1]+ "°");
+                document.getElementById("wi3").innerHTML =("WIND INTENSITY: " + msg.data.windIntensity[0][1]+ " m/s");
+                document.getElementById("rh3").innerHTML =("RAIN HEIGHT: " + msg.data.rainHeight[0][1]+ " mm/h");
+            };
+
+            
+            
+            
+            
+        }
+        
+    </script>
+	
+	
+	 <script type="text/javascript">
+
+	var i = 0;
+	var temp = [];
+
+		//Device 2 has the same code as device 1 but changes the entityId
+        function Device4Live() {
+			var token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYW5kcm8ubWlnbGlvcmU5NEBnbWFpbC5jb20iLCJzY29wZXMiOlsiVEVOQU5UX0FETUlOIl0sInVzZXJJZCI6ImY1ZDk0ZTEwLTY5NTQtMTFlYS04NzUxLWYxYjk3N2E0ZWFjNCIsImZpcnN0TmFtZSI6IkFsZXNzYW5kcm8iLCJsYXN0TmFtZSI6Ik1pZ2xpb3JlIiwiZW5hYmxlZCI6dHJ1ZSwicHJpdmFjeVBvbGljeUFjY2VwdGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiZjViODBhNzAtNjk1NC0xMWVhLTg3NTEtZjFiOTc3YTRlYWM0IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCIsImlzcyI6ImNsb3VkLnRoaW5nc2JvYXJkLmlvIiwiaWF0IjoxNTg2NDM2Nzg1LCJleHAiOjE1ODgyMzY3ODV9.lhE6yPWBqIu7Xk68icyU8sO8FJBrg3EnGxFuDc7BNTC1nfXzKpfp0t4VKEZsBn49A_3AgTPZ50EQigNhugWnqA";
+
+            var entityId = "c5681570-7824-11ea-b99e-a33d0c6d5511";
+            var webSocket = new WebSocket("wss://cloud.thingsboard.io/api/ws/plugins/telemetry?token=" + token);
+
+            webSocket.onopen = function () {
+                var object = {
+                    tsSubCmds: [
+                        {
+                            entityType: "DEVICE",
+                            entityId: entityId,
+                                                       
+                            scope: "LATEST_TELEMETRY",
+                            cmdId: 10
+                        }
+                    ],
+                    historyCmds: [],
+                    attrSubCmds: []
+                };
+                var data = JSON.stringify(object);
+                webSocket.send(data);
+                
+                
+            };
+
+            webSocket.onmessage = function (event) {
+                var received_msg = event.data;
+                var msg=JSON.parse(event.data);
+                var buttonStop = document.getElementById("stop3");		//if click button stop , device stops showing data
+
+				buttonStop.onclick = function() {
+				// Close the connection, if open.
+				if (webSocket.readyState === WebSocket.OPEN) {
+				webSocket.close();
+				}
+			}
+				//publish the live data of the sensors
+                document.getElementById("tp4").innerHTML =("TEMPERATURE: " + msg.data.temperature[0][1]+ "°");
+                document.getElementById("humidity4").innerHTML =("HUMIDITY: " + msg.data.humidity[0][1]+ " %");
+                /*document.getElementById("wd4").innerHTML =("WIND DIRECTION: " + msg.data.windDirection[0][1]+ "°");
+                document.getElementById("wi4").innerHTML =("WIND INTENSITY: " + msg.data.windIntensity[0][1]+ " m/s");
+                document.getElementById("rh4").innerHTML =("RAIN HEIGHT: " + msg.data.rainHeight[0][1]+ " mm/h"); 
+				*/
+            };
+
+            
+            
+            
+            
+        }
+        
+    </script>
+	
+	 <script type="text/javascript">
+
+	var i = 0;
+	var temp = [];
+
+		//Device 2 has the same code as device 1 but changes the entityId
+        function Device5Live() {
+			var token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYW5kcm8ubWlnbGlvcmU5NEBnbWFpbC5jb20iLCJzY29wZXMiOlsiVEVOQU5UX0FETUlOIl0sInVzZXJJZCI6ImY1ZDk0ZTEwLTY5NTQtMTFlYS04NzUxLWYxYjk3N2E0ZWFjNCIsImZpcnN0TmFtZSI6IkFsZXNzYW5kcm8iLCJsYXN0TmFtZSI6Ik1pZ2xpb3JlIiwiZW5hYmxlZCI6dHJ1ZSwicHJpdmFjeVBvbGljeUFjY2VwdGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiZjViODBhNzAtNjk1NC0xMWVhLTg3NTEtZjFiOTc3YTRlYWM0IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCIsImlzcyI6ImNsb3VkLnRoaW5nc2JvYXJkLmlvIiwiaWF0IjoxNTg2NDM2Nzg1LCJleHAiOjE1ODgyMzY3ODV9.lhE6yPWBqIu7Xk68icyU8sO8FJBrg3EnGxFuDc7BNTC1nfXzKpfp0t4VKEZsBn49A_3AgTPZ50EQigNhugWnqA";
+
+            var entityId = "4fa1f180-7d6a-11ea-b99e-a33d0c6d5511";
+            var webSocket = new WebSocket("wss://cloud.thingsboard.io/api/ws/plugins/telemetry?token=" + token);
+
+            webSocket.onopen = function () {
+                var object = {
+                    tsSubCmds: [
+                        {
+                            entityType: "DEVICE",
+                            entityId: entityId,
+                                                       
+                            scope: "LATEST_TELEMETRY",
+                            cmdId: 10
+                        }
+                    ],
+                    historyCmds: [],
+                    attrSubCmds: []
+                };
+                var data = JSON.stringify(object);
+                webSocket.send(data);
+                
+                
+            };
+
+            webSocket.onmessage = function (event) {
+                var received_msg = event.data;
+                var msg=JSON.parse(event.data);
+                var buttonStop = document.getElementById("stop3");		//if click button stop , device stops showing data
+
+				buttonStop.onclick = function() {
+				// Close the connection, if open.
+				if (webSocket.readyState === WebSocket.OPEN) {
+				webSocket.close();
+				}
+			}
+				//publish the live data of the sensors
+                document.getElementById("tp5").innerHTML =("TEMPERATURE: " + msg.data.temperature[0][1]+ "°");
+                document.getElementById("humidity5").innerHTML =("HUMIDITY: " + msg.data.humidity[0][1]+ " %");
+                /*document.getElementById("wd4").innerHTML =("WIND DIRECTION: " + msg.data.windDirection[0][1]+ "°");
+                document.getElementById("wi4").innerHTML =("WIND INTENSITY: " + msg.data.windIntensity[0][1]+ " m/s");
+                document.getElementById("rh4").innerHTML =("RAIN HEIGHT: " + msg.data.rainHeight[0][1]+ " mm/h"); 
+				*/
+            };
+
+            
+            
+            
+            
+        }
+        
+    </script>
+
+	<script type="text/javascript">
+
+	var i = 0;
+	var temp = [];
+
+		//Device 2 has the same code as device 1 but changes the entityId
+        function Device6Live() {
+			var token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYW5kcm8ubWlnbGlvcmU5NEBnbWFpbC5jb20iLCJzY29wZXMiOlsiVEVOQU5UX0FETUlOIl0sInVzZXJJZCI6ImY1ZDk0ZTEwLTY5NTQtMTFlYS04NzUxLWYxYjk3N2E0ZWFjNCIsImZpcnN0TmFtZSI6IkFsZXNzYW5kcm8iLCJsYXN0TmFtZSI6Ik1pZ2xpb3JlIiwiZW5hYmxlZCI6dHJ1ZSwicHJpdmFjeVBvbGljeUFjY2VwdGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiZjViODBhNzAtNjk1NC0xMWVhLTg3NTEtZjFiOTc3YTRlYWM0IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCIsImlzcyI6ImNsb3VkLnRoaW5nc2JvYXJkLmlvIiwiaWF0IjoxNTg2NDM2Nzg1LCJleHAiOjE1ODgyMzY3ODV9.lhE6yPWBqIu7Xk68icyU8sO8FJBrg3EnGxFuDc7BNTC1nfXzKpfp0t4VKEZsBn49A_3AgTPZ50EQigNhugWnqA";
+
+            var entityId = "0ecb9900-7d6e-11ea-b99e-a33d0c6d5511";
+            var webSocket = new WebSocket("wss://cloud.thingsboard.io/api/ws/plugins/telemetry?token=" + token);
+
+            webSocket.onopen = function () {
+                var object = {
+                    tsSubCmds: [
+                        {
+                            entityType: "DEVICE",
+                            entityId: entityId,
+                                                       
+                            scope: "LATEST_TELEMETRY",
+                            cmdId: 10
+                        }
+                    ],
+                    historyCmds: [],
+                    attrSubCmds: []
+                };
+                var data = JSON.stringify(object);
+                webSocket.send(data);
+                
+                
+            };
+
+            webSocket.onmessage = function (event) {
+                var received_msg = event.data;
+                var msg=JSON.parse(event.data);
+                var buttonStop = document.getElementById("stop6");		//if click button stop , device stops showing data
+
+				buttonStop.onclick = function() {
+				// Close the connection, if open.
+				if (webSocket.readyState === WebSocket.OPEN) {
+				webSocket.close();
+				}
+			}
+				//publish the live data of the sensors
+                document.getElementById("tp6").innerHTML =("TEMPERATURE: " + msg.data.temperature[0][1]+ "°");
+                document.getElementById("humidity6").innerHTML =("HUMIDITY: " + msg.data.humidity[0][1]+ " %");
+                document.getElementById("wd6").innerHTML =("WIND DIRECTION: " + msg.data.windDirection[0][1]+ "°");
+                document.getElementById("wi6").innerHTML =("WIND INTENSITY: " + msg.data.windIntensity[0][1]+ " m/s");
+                document.getElementById("rh6").innerHTML =("RAIN HEIGHT: " + msg.data.rainHeight[0][1]+ " mm/h"); 
+				
+            };
+
+            
+            
+            
+            
+        }
+        
+    </script>
+	
+	<script type="text/javascript">
+
+	var i = 0;
+	var temp = [];
+
+		//Device 2 has the same code as device 1 but changes the entityId
+        function Device7Live() {
+			var token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYW5kcm8ubWlnbGlvcmU5NEBnbWFpbC5jb20iLCJzY29wZXMiOlsiVEVOQU5UX0FETUlOIl0sInVzZXJJZCI6ImY1ZDk0ZTEwLTY5NTQtMTFlYS04NzUxLWYxYjk3N2E0ZWFjNCIsImZpcnN0TmFtZSI6IkFsZXNzYW5kcm8iLCJsYXN0TmFtZSI6Ik1pZ2xpb3JlIiwiZW5hYmxlZCI6dHJ1ZSwicHJpdmFjeVBvbGljeUFjY2VwdGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiZjViODBhNzAtNjk1NC0xMWVhLTg3NTEtZjFiOTc3YTRlYWM0IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCIsImlzcyI6ImNsb3VkLnRoaW5nc2JvYXJkLmlvIiwiaWF0IjoxNTg2NDM2Nzg1LCJleHAiOjE1ODgyMzY3ODV9.lhE6yPWBqIu7Xk68icyU8sO8FJBrg3EnGxFuDc7BNTC1nfXzKpfp0t4VKEZsBn49A_3AgTPZ50EQigNhugWnqA";
+
+            var entityId = "c514f480-78b5-11ea-b99e-a33d0c6d5511";
+            var webSocket = new WebSocket("wss://cloud.thingsboard.io/api/ws/plugins/telemetry?token=" + token);
+
+            webSocket.onopen = function () {
+                var object = {
+                    tsSubCmds: [
+                        {
+                            entityType: "DEVICE",
+                            entityId: entityId,
+                                                       
+                            scope: "LATEST_TELEMETRY",
+                            cmdId: 10
+                        }
+                    ],
+                    historyCmds: [],
+                    attrSubCmds: []
+                };
+                var data = JSON.stringify(object);
+                webSocket.send(data);
+                
+                
+            };
+
+            webSocket.onmessage = function (event) {
+                var received_msg = event.data;
+                var msg=JSON.parse(event.data);
+                var buttonStop = document.getElementById("stop7");		//if click button stop , device stops showing data
+
+				buttonStop.onclick = function() {
+				// Close the connection, if open.
+				if (webSocket.readyState === WebSocket.OPEN) {
+				webSocket.close();
+				}
+			}
+				//publish the live data of the sensors
+                document.getElementById("tp7").innerHTML =("TEMPERATURE: " + msg.data.temperature[0][1]+ "°");
+                document.getElementById("humidity7").innerHTML =("HUMIDITY: " + msg.data.humidity[0][1]+ " %");
+                document.getElementById("wd7").innerHTML =("WIND DIRECTION: " + msg.data.windDirection[0][1]+ "°");
+                document.getElementById("wi7").innerHTML =("WIND INTENSITY: " + msg.data.windIntensity[0][1]+ " m/s");
+                document.getElementById("rh7").innerHTML =("RAIN HEIGHT: " + msg.data.rainHeight[0][1]+ " mm/h"); 
+				
+            };
+
+            
+            
+            
+            
+        }
+        
+    </script>
+	
+    <script type="text/javascript">
+
+//simple function that sort the values in descending order , for the timestamp value	
+	function sortTableT() {
+	  var table, rows, switching, i, val1, val2, shouldSwitch;
+	  table = document.getElementById("TabTemp");
+	  switching = true;
+	  while (switching) {
+		switching = false;
+		rows = table.rows;
+
+		for (i = 1; i < (rows.length - 1); i++) {
+		  shouldSwitch = false;
+		  val1 = rows[i].getElementsByTagName("TD")[1];
+		  val2 = rows[i + 1].getElementsByTagName("TD")[1];
+
+		  if (Number(val1.innerHTML) < Number(val2.innerHTML)) {
+
+			shouldSwitch = true;
+			break;
+		  }
+		}
+		if (shouldSwitch) {
+		  rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+		  switching = true;
+		}
+	  }
+	}
+
+//we repeat the function for all sensors
+		function sortTableH() {
+		console.log("sorting");
+	  var table, rows, switching, i, x, y, shouldSwitch;
+	  table = document.getElementById("TabHum");
+	  switching = true;
+	  while (switching) {
+		switching = false;
+		rows = table.rows;
+		for (i = 1; i < (rows.length - 1); i++) {
+		  shouldSwitch = false;
+		  x = rows[i].getElementsByTagName("TD")[1];
+		  y = rows[i + 1].getElementsByTagName("TD")[1];
+		  if (Number(x.innerHTML) < Number(y.innerHTML)) {
+			shouldSwitch = true;
+			break;
+		  }
+		}
+		if (shouldSwitch) {
+		  rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+		  switching = true;
+		}
+	  }
+	}
+	
+		function sortTableD() {
+		console.log("sorting");
+	  var table, rows, switching, i, x, y, shouldSwitch;
+	  table = document.getElementById("TabDir");
+	  switching = true;
+	  while (switching) {
+		switching = false;
+		rows = table.rows;
+		for (i = 1; i < (rows.length - 1); i++) {
+		  shouldSwitch = false;
+		  x = rows[i].getElementsByTagName("TD")[1];
+		  y = rows[i + 1].getElementsByTagName("TD")[1];
+		  if (Number(x.innerHTML) < Number(y.innerHTML)) {
+			shouldSwitch = true;
+			break;
+		  }
+		}
+		if (shouldSwitch) {
+		  rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+		  switching = true;
+		}
+	  }
+	}
+
+		function sortTableI() {
+		console.log("sorting");
+	  var table, rows, switching, i, x, y, shouldSwitch;
+	  table = document.getElementById("TabInt");
+	  switching = true;
+	  while (switching) {
+		switching = false;
+		rows = table.rows;
+		for (i = 1; i < (rows.length - 1); i++) {
+		  shouldSwitch = false;
+		  x = rows[i].getElementsByTagName("TD")[1];
+		  y = rows[i + 1].getElementsByTagName("TD")[1];
+		  if (Number(x.innerHTML) < Number(y.innerHTML)) {
+			shouldSwitch = true;
+			break;
+		  }
+		}
+		if (shouldSwitch) {
+		  rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+		  switching = true;
+		}
+	  }
+	}
+
+		function sortTableR() {
+		console.log("sorting");
+	  var table, rows, switching, i, x, y, shouldSwitch;
+	  table = document.getElementById("TabRain");
+	  switching = true;
+	  while (switching) {
+		switching = false;
+		rows = table.rows;
+		for (i = 1; i < (rows.length - 1); i++) {
+		  shouldSwitch = false;
+		  x = rows[i].getElementsByTagName("TD")[1];
+		  y = rows[i + 1].getElementsByTagName("TD")[1];
+		  if (Number(x.innerHTML) < Number(y.innerHTML)) {
+			shouldSwitch = true;
+			break;
+		  }
+		}
+		if (shouldSwitch) {
+		  rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+		  switching = true;
+		}
+	  }
+	}
+	
+	
+	
+	
+	
+	//simple function that sort the values in descending order , for the timestamp value	
+	function sortTableT2() {
+	  var table, rows, switching, i, val1, val2, shouldSwitch;
+	  table = document.getElementById("TabTemp3");
+	  switching = true;
+	  while (switching) {
+		switching = false;
+		rows = table.rows;
+
+		for (i = 1; i < (rows.length - 1); i++) {
+		  shouldSwitch = false;
+		  val1 = rows[i].getElementsByTagName("TD")[1];
+		  val2 = rows[i + 1].getElementsByTagName("TD")[1];
+
+		  if (Number(val1.innerHTML) < Number(val2.innerHTML)) {
+
+			shouldSwitch = true;
+			break;
+		  }
+		}
+		if (shouldSwitch) {
+		  rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+		  switching = true;
+		}
+	  }
+	}
+
+//we repeat the function for all sensors
+		function sortTableH2() {
+		console.log("sorting");
+	  var table, rows, switching, i, x, y, shouldSwitch;
+	  table = document.getElementById("TabHum3");
+	  switching = true;
+	  while (switching) {
+		switching = false;
+		rows = table.rows;
+		for (i = 1; i < (rows.length - 1); i++) {
+		  shouldSwitch = false;
+		  x = rows[i].getElementsByTagName("TD")[1];
+		  y = rows[i + 1].getElementsByTagName("TD")[1];
+		  if (Number(x.innerHTML) < Number(y.innerHTML)) {
+			shouldSwitch = true;
+			break;
+		  }
+		}
+		if (shouldSwitch) {
+		  rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+		  switching = true;
+		}
+	  }
+	}
+	
+		function sortTableD2() {
+		console.log("sorting");
+	  var table, rows, switching, i, x, y, shouldSwitch;
+	  table = document.getElementById("TabDir3");
+	  switching = true;
+	  while (switching) {
+		switching = false;
+		rows = table.rows;
+		for (i = 1; i < (rows.length - 1); i++) {
+		  shouldSwitch = false;
+		  x = rows[i].getElementsByTagName("TD")[1];
+		  y = rows[i + 1].getElementsByTagName("TD")[1];
+		  if (Number(x.innerHTML) < Number(y.innerHTML)) {
+			shouldSwitch = true;
+			break;
+		  }
+		}
+		if (shouldSwitch) {
+		  rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+		  switching = true;
+		}
+	  }
+	}
+
+		function sortTableI2() {
+		console.log("sorting");
+	  var table, rows, switching, i, x, y, shouldSwitch;
+	  table = document.getElementById("TabInt3");
+	  switching = true;
+	  while (switching) {
+		switching = false;
+		rows = table.rows;
+		for (i = 1; i < (rows.length - 1); i++) {
+		  shouldSwitch = false;
+		  x = rows[i].getElementsByTagName("TD")[1];
+		  y = rows[i + 1].getElementsByTagName("TD")[1];
+		  if (Number(x.innerHTML) < Number(y.innerHTML)) {
+			shouldSwitch = true;
+			break;
+		  }
+		}
+		if (shouldSwitch) {
+		  rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+		  switching = true;
+		}
+	  }
+	}
+
+		function sortTableR2() {
+		console.log("sorting");
+	  var table, rows, switching, i, x, y, shouldSwitch;
+	  table = document.getElementById("TabRain3");
+	  switching = true;
+	  while (switching) {
+		switching = false;
+		rows = table.rows;
+		for (i = 1; i < (rows.length - 1); i++) {
+		  shouldSwitch = false;
+		  x = rows[i].getElementsByTagName("TD")[1];
+		  y = rows[i + 1].getElementsByTagName("TD")[1];
+		  if (Number(x.innerHTML) < Number(y.innerHTML)) {
+			shouldSwitch = true;
+			break;
+		  }
+		}
+		if (shouldSwitch) {
+		  rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+		  switching = true;
+		}
+	  }
+	}
+	
+	
+		//fetch list of latest values for particular entity type and entity id using GET request
+        function LastHourTemp() {
+			
+			var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+			var currentTime = new Date().getTime();
+			// take values from the last hour 
+			var olderTime = currentTime - 3600000;
+
+
+             var xhttp = new XMLHttpRequest();
+			 //url with device id and keys , also set a start time to 1 hour ago.
+			xhttp.open('GET', 'http://demo.thingsboard.io/api/plugins/telemetry/DEVICE/0cb57790-6954-11ea-9cdd-b3576b7d39f1/values/timeseries?keys=temperature,device&startTs='+ (currentTime - 600000) + '&endTs=' + currentTime + '&limit=60&agg=AVG');
+			xhttp.setRequestHeader('Content-Type', 'application/json');
+			// need a token to take data
+			xhttp.setRequestHeader('X-Authorization', 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYW5kcm8ubWlnbGlvcmU5NEBnbWFpbC5jb20iLCJzY29wZXMiOlsiVEVOQU5UX0FETUlOIl0sInVzZXJJZCI6IjAzN2RiMjAwLTY5NTQtMTFlYS1hNjhiLTdkMGVmMmE2ODJkMyIsImZpcnN0TmFtZSI6IkFsZXNzYW5kcm8iLCJsYXN0TmFtZSI6Ik1pZ2xpb3JlIiwiZW5hYmxlZCI6dHJ1ZSwicHJpdmFjeVBvbGljeUFjY2VwdGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMDM2ZmNmNTAtNjk1NC0xMWVhLWE2OGItN2QwZWYyYTY4MmQzIiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCIsImlzcyI6InRoaW5nc2JvYXJkLmlvIiwiaWF0IjoxNTg5MTk0MTk0LCJleHAiOjE1OTA5OTQxOTR9.GzMG-KNZ3j_onSBeAyKVmamy7ZNuTd02PT_i7rVRipvXNcXsuFOi_XZaJrF50LHnq68e8P4DpjuNGqoa1X6maQ');
+			xhttp.send();
+			// send the request
+			xhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					var response = JSON.parse(this.responseText);
+
+					// response contains all the data 
+					var temp = response.temperature;
+					var dev = response.device;
+					
+
+					for (var i = 0; i < temp.length; i++) {		
+							//build the table 
+							var table = document.getElementById("TabTemp");
+							//add row
+							var row = table.insertRow();
+							// add 4 cells
+							var cell0 = row.insertCell(0);
+							var cell1 = row.insertCell(1);
+							var cell2 = row.insertCell(2);
+							var cell3 = row.insertCell(3);
+							
+								var date = new Date(temp[i].ts);
+								var year = date.getFullYear();
+								var month = months[date.getMonth()];
+								var day = date.getDate();
+								// Hours part from the timestamp
+								var hours = date.getHours();
+								// Minutes part from the timestamp
+								var minutes = date.getMinutes();
+								// Seconds part from the timestamp
+								var seconds = date.getSeconds();
+								var milliseconds = date.getMilliseconds();
+
+								// Will display time in 00:00:00 format
+								var formattedTime = day + " " + month + " " + year + " " + hours + ' : ' + minutes + 'm : ' + seconds + "s : " + milliseconds + "ms";
+								
+								
+								cell1.innerHTML = Number(temp[i].ts);
+								cell2.innerHTML = formattedTime;
+								cell3.innerHTML = Number(temp[i].value).toFixed(2) + "°";
+								cell0.innerHTML = dev[i].value;
+								
+						}
+
+						console.log(response);
+
+					
+					
+
+				}
+
+			};
+
+			//same GET request but with entityId of the second device
+			var xhttp2 = new XMLHttpRequest();
+			xhttp2.open('GET', 'http://demo.thingsboard.io/api/plugins/telemetry/DEVICE/0cb80fa0-6954-11ea-9cdd-b3576b7d39f1/values/timeseries?keys=temperature,device&startTs='+ (currentTime - 600000) + '&endTs=' + currentTime + '&limit=60&agg=AVG');
+			xhttp2.setRequestHeader('Content-Type', 'application/json');
+			xhttp2.setRequestHeader('X-Authorization', 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYW5kcm8ubWlnbGlvcmU5NEBnbWFpbC5jb20iLCJzY29wZXMiOlsiVEVOQU5UX0FETUlOIl0sInVzZXJJZCI6IjAzN2RiMjAwLTY5NTQtMTFlYS1hNjhiLTdkMGVmMmE2ODJkMyIsImZpcnN0TmFtZSI6IkFsZXNzYW5kcm8iLCJsYXN0TmFtZSI6Ik1pZ2xpb3JlIiwiZW5hYmxlZCI6dHJ1ZSwicHJpdmFjeVBvbGljeUFjY2VwdGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMDM2ZmNmNTAtNjk1NC0xMWVhLWE2OGItN2QwZWYyYTY4MmQzIiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCIsImlzcyI6InRoaW5nc2JvYXJkLmlvIiwiaWF0IjoxNTg5MTk0MTk0LCJleHAiOjE1OTA5OTQxOTR9.GzMG-KNZ3j_onSBeAyKVmamy7ZNuTd02PT_i7rVRipvXNcXsuFOi_XZaJrF50LHnq68e8P4DpjuNGqoa1X6maQ');
+			xhttp2.send();
+			xhttp2.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					var response = JSON.parse(this.responseText);
+
+
+					var temp = response.temperature;
+					var dev = response.device;
+
+					for (var i = 0; i < temp.length; i++) {		
+
+							var table = document.getElementById("TabTemp");
+
+							var row = table.insertRow();
+
+							var cell0 = row.insertCell(0);
+							var cell1 = row.insertCell(1);
+							var cell2 = row.insertCell(2);
+							var cell3 = row.insertCell(3);
+							
+								var date = new Date(temp[i].ts);
+								var year = date.getFullYear();
+								var month = months[date.getMonth()];
+								var day = date.getDate();
+								// Hours part from the timestamp
+								var hours = date.getHours();
+								// Minutes part from the timestamp
+								var minutes = date.getMinutes();
+								// Seconds part from the timestamp
+								var seconds = date.getSeconds();
+								var milliseconds = date.getMilliseconds();
+
+								// Will display time in 00:00:00 format
+								var formattedTime = day + " " + month + " " + year + " " + hours + ' : ' + minutes + 'm : ' + seconds + "s : " + milliseconds + "ms";
+								
+								
+								cell1.innerHTML = Number(temp[i].ts);
+								cell2.innerHTML = formattedTime;
+								cell3.innerHTML = Number(temp[i].value).toFixed(2) + "°";
+								cell0.innerHTML = dev[i].value;
+								
+
+					}
+
+						console.log(response);
+
+					
+					
+
+				}
+
+			};
+
+
+		}
+		
+		
+		
+		function LastHourTemp2() {
+			
+			var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+			var currentTime = new Date().getTime();
+			// take values from the last hour 
+			var olderTime = currentTime - 3600000;
+
+
+             var xhttp = new XMLHttpRequest();
+			 //url with device id and keys , also set a start time to 1 hour ago.
+			xhttp.open('GET', 'http://demo.thingsboard.io/api/plugins/telemetry/DEVICE/fbe5d470-70e0-11ea-ad02-b3576b7d39f1/values/timeseries?keys=temperature,device&startTs='+ (currentTime - 600000) + '&endTs=' + currentTime + '&limit=60&agg=AVG');
+			xhttp.setRequestHeader('Content-Type', 'application/json');
+			// need a token to take data
+			xhttp.setRequestHeader('X-Authorization', 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYW5kcm8ubWlnbGlvcmU5NEBnbWFpbC5jb20iLCJzY29wZXMiOlsiVEVOQU5UX0FETUlOIl0sInVzZXJJZCI6IjAzN2RiMjAwLTY5NTQtMTFlYS1hNjhiLTdkMGVmMmE2ODJkMyIsImZpcnN0TmFtZSI6IkFsZXNzYW5kcm8iLCJsYXN0TmFtZSI6Ik1pZ2xpb3JlIiwiZW5hYmxlZCI6dHJ1ZSwicHJpdmFjeVBvbGljeUFjY2VwdGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMDM2ZmNmNTAtNjk1NC0xMWVhLWE2OGItN2QwZWYyYTY4MmQzIiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCIsImlzcyI6InRoaW5nc2JvYXJkLmlvIiwiaWF0IjoxNTg2NDM2NDY3LCJleHAiOjE1ODgyMzY0Njd9.gQLfSGaMvXkrjkBkYehrRZ4EEjRueFVuf1wjj6iz64eLYEsyv3qjK3-AQy8-Af8cUmObxvc6ytWcacVZ2bMxVw');
+			xhttp.send();
+			// send the request
+			xhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					var response = JSON.parse(this.responseText);
+
+					// response contains all the data 
+					var temp = response.temperature;
+					var dev = response.device;
+					
+
+					for (var i = 0; i < temp.length; i++) {		
+							//build the table 
+							var table = document.getElementById("TabTemp2");
+							//add row
+							var row = table.insertRow();
+							// add 4 cells
+							var cell0 = row.insertCell(0);
+							var cell1 = row.insertCell(1);
+							var cell2 = row.insertCell(2);
+							var cell3 = row.insertCell(3);
+							
+								var date = new Date(temp[i].ts);
+								var year = date.getFullYear();
+								var month = months[date.getMonth()];
+								var day = date.getDate();
+								// Hours part from the timestamp
+								var hours = date.getHours();
+								// Minutes part from the timestamp
+								var minutes = date.getMinutes();
+								// Seconds part from the timestamp
+								var seconds = date.getSeconds();
+								var milliseconds = date.getMilliseconds();
+
+								// Will display time in 00:00:00 format
+								var formattedTime = day + " " + month + " " + year + " " + hours + ' : ' + minutes + 'm : ' + seconds + "s : " + milliseconds + "ms";
+								
+								
+								cell1.innerHTML = Number(temp[i].ts);
+								cell2.innerHTML = formattedTime;
+								cell3.innerHTML = Number(temp[i].value).toFixed(2) + "°";
+								cell0.innerHTML = dev[i].value;
+								
+						}
+
+						console.log(response);
+
+					
+					
+
+				}
+
+			};
+			}
+		
+		
+		//NOW DO THE SAME FOR ALL THE SENSORS 
+		//BE CAREFUL AND CHANGE ENTITY_ID FOR EACH DEVICE
+		
+		
+		function LastHourTemp3() {
+			
+			var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+			var currentTime = new Date().getTime();
+			// take values from the last hour 
+			var olderTime = currentTime - 3600000;
+
+
+             var xhttp = new XMLHttpRequest();
+			 //url with device id and keys , also set a start time to 1 hour ago.
+			xhttp.open('GET', 'http://cloud.thingsboard.io/api/plugins/telemetry/DEVICE/c5681570-7824-11ea-b99e-a33d0c6d5511/values/timeseries?keys=temperature,device&startTs='+ (currentTime - 600000) + '&endTs=' + currentTime + '&limit=60&agg=AVG');
+			xhttp.setRequestHeader('Content-Type', 'application/json');
+			// need a token to take data
+			xhttp.setRequestHeader('X-Authorization', 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYW5kcm8ubWlnbGlvcmU5NEBnbWFpbC5jb20iLCJzY29wZXMiOlsiVEVOQU5UX0FETUlOIl0sInVzZXJJZCI6ImY1ZDk0ZTEwLTY5NTQtMTFlYS04NzUxLWYxYjk3N2E0ZWFjNCIsImZpcnN0TmFtZSI6IkFsZXNzYW5kcm8iLCJsYXN0TmFtZSI6Ik1pZ2xpb3JlIiwiZW5hYmxlZCI6dHJ1ZSwicHJpdmFjeVBvbGljeUFjY2VwdGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiZjViODBhNzAtNjk1NC0xMWVhLTg3NTEtZjFiOTc3YTRlYWM0IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCIsImlzcyI6ImNsb3VkLnRoaW5nc2JvYXJkLmlvIiwiaWF0IjoxNTg2NDM2Nzg1LCJleHAiOjE1ODgyMzY3ODV9.lhE6yPWBqIu7Xk68icyU8sO8FJBrg3EnGxFuDc7BNTC1nfXzKpfp0t4VKEZsBn49A_3AgTPZ50EQigNhugWnqA');
+			xhttp.send();
+			// send the request
+			xhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					var response = JSON.parse(this.responseText);
+
+					// response contains all the data 
+					var temp = response.temperature;
+					var dev = response.device;
+					
+
+					for (var i = 0; i < temp.length; i++) {		
+							//build the table 
+							var table = document.getElementById("TabTemp3");
+							//add row
+							var row = table.insertRow();
+							// add 4 cells
+							var cell0 = row.insertCell(0);
+							var cell1 = row.insertCell(1);
+							var cell2 = row.insertCell(2);
+							var cell3 = row.insertCell(3);
+							
+								var date = new Date(temp[i].ts);
+								var year = date.getFullYear();
+								var month = months[date.getMonth()];
+								var day = date.getDate();
+								// Hours part from the timestamp
+								var hours = date.getHours();
+								// Minutes part from the timestamp
+								var minutes = date.getMinutes();
+								// Seconds part from the timestamp
+								var seconds = date.getSeconds();
+								var milliseconds = date.getMilliseconds();
+
+								// Will display time in 00:00:00 format
+								var formattedTime = day + " " + month + " " + year + " " + hours + ' : ' + minutes + 'm : ' + seconds + "s : " + milliseconds + "ms";
+								
+								
+								cell1.innerHTML = Number(temp[i].ts);
+								cell2.innerHTML = formattedTime;
+								cell3.innerHTML = Number(temp[i].value).toFixed(2) + "°";
+								cell0.innerHTML = dev[i].value;
+								
+						}
+
+						console.log(response);
+
+					
+					
+
+				}
+
+			};
+
+			//same GET request but with entityId of the second device
+			var xhttp2 = new XMLHttpRequest();
+			xhttp2.open('GET', 'http://cloud.thingsboard.io/api/plugins/telemetry/DEVICE/4fa1f180-7d6a-11ea-b99e-a33d0c6d5511/values/timeseries?keys=temperature,device&startTs='+ (currentTime - 600000) + '&endTs=' + currentTime + '&limit=60&agg=AVG');
+			xhttp2.setRequestHeader('Content-Type', 'application/json');
+			xhttp2.setRequestHeader('X-Authorization', 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYW5kcm8ubWlnbGlvcmU5NEBnbWFpbC5jb20iLCJzY29wZXMiOlsiVEVOQU5UX0FETUlOIl0sInVzZXJJZCI6ImY1ZDk0ZTEwLTY5NTQtMTFlYS04NzUxLWYxYjk3N2E0ZWFjNCIsImZpcnN0TmFtZSI6IkFsZXNzYW5kcm8iLCJsYXN0TmFtZSI6Ik1pZ2xpb3JlIiwiZW5hYmxlZCI6dHJ1ZSwicHJpdmFjeVBvbGljeUFjY2VwdGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiZjViODBhNzAtNjk1NC0xMWVhLTg3NTEtZjFiOTc3YTRlYWM0IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCIsImlzcyI6ImNsb3VkLnRoaW5nc2JvYXJkLmlvIiwiaWF0IjoxNTg2NDM2Nzg1LCJleHAiOjE1ODgyMzY3ODV9.lhE6yPWBqIu7Xk68icyU8sO8FJBrg3EnGxFuDc7BNTC1nfXzKpfp0t4VKEZsBn49A_3AgTPZ50EQigNhugWnqA');
+			xhttp2.send();
+			xhttp2.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					var response = JSON.parse(this.responseText);
+
+
+					var temp = response.temperature;
+					var dev = response.device;
+
+					for (var i = 0; i < temp.length; i++) {		
+
+							var table = document.getElementById("TabTemp3");
+
+							var row = table.insertRow();
+
+							var cell0 = row.insertCell(0);
+							var cell1 = row.insertCell(1);
+							var cell2 = row.insertCell(2);
+							var cell3 = row.insertCell(3);
+							
+								var date = new Date(temp[i].ts);
+								var year = date.getFullYear();
+								var month = months[date.getMonth()];
+								var day = date.getDate();
+								// Hours part from the timestamp
+								var hours = date.getHours();
+								// Minutes part from the timestamp
+								var minutes = date.getMinutes();
+								// Seconds part from the timestamp
+								var seconds = date.getSeconds();
+								var milliseconds = date.getMilliseconds();
+
+								// Will display time in 00:00:00 format
+								var formattedTime = day + " " + month + " " + year + " " + hours + ' : ' + minutes + 'm : ' + seconds + "s : " + milliseconds + "ms";
+								
+								
+								cell1.innerHTML = Number(temp[i].ts);
+								cell2.innerHTML = formattedTime;
+								cell3.innerHTML = Number(temp[i].value).toFixed(2) + "°";
+								cell0.innerHTML = dev[i].value;
+								
+
+					}
+
+						console.log(response);
+
+					
+					
+
+				}
+
+			};
+			
+			
+			var xhttp3 = new XMLHttpRequest();
+			xhttp3.open('GET', 'http://cloud.thingsboard.io/api/plugins/telemetry/DEVICE/0ecb9900-7d6e-11ea-b99e-a33d0c6d5511/values/timeseries?keys=temperature,device&startTs='+ (currentTime - 600000) + '&endTs=' + currentTime + '&limit=60&agg=AVG');
+			xhttp3.setRequestHeader('Content-Type', 'application/json');
+			xhttp3.setRequestHeader('X-Authorization', 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYW5kcm8ubWlnbGlvcmU5NEBnbWFpbC5jb20iLCJzY29wZXMiOlsiVEVOQU5UX0FETUlOIl0sInVzZXJJZCI6ImY1ZDk0ZTEwLTY5NTQtMTFlYS04NzUxLWYxYjk3N2E0ZWFjNCIsImZpcnN0TmFtZSI6IkFsZXNzYW5kcm8iLCJsYXN0TmFtZSI6Ik1pZ2xpb3JlIiwiZW5hYmxlZCI6dHJ1ZSwicHJpdmFjeVBvbGljeUFjY2VwdGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiZjViODBhNzAtNjk1NC0xMWVhLTg3NTEtZjFiOTc3YTRlYWM0IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCIsImlzcyI6ImNsb3VkLnRoaW5nc2JvYXJkLmlvIiwiaWF0IjoxNTg2NDM2Nzg1LCJleHAiOjE1ODgyMzY3ODV9.lhE6yPWBqIu7Xk68icyU8sO8FJBrg3EnGxFuDc7BNTC1nfXzKpfp0t4VKEZsBn49A_3AgTPZ50EQigNhugWnqA');
+			xhttp3.send();
+			xhttp3.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					var response = JSON.parse(this.responseText);
+
+
+					var temp = response.temperature;
+					var dev = response.device;
+
+					for (var i = 0; i < temp.length; i++) {		
+
+							var table = document.getElementById("TabTemp3");
+
+							var row = table.insertRow();
+
+							var cell0 = row.insertCell(0);
+							var cell1 = row.insertCell(1);
+							var cell2 = row.insertCell(2);
+							var cell3 = row.insertCell(3);
+							
+								var date = new Date(temp[i].ts);
+								var year = date.getFullYear();
+								var month = months[date.getMonth()];
+								var day = date.getDate();
+								// Hours part from the timestamp
+								var hours = date.getHours();
+								// Minutes part from the timestamp
+								var minutes = date.getMinutes();
+								// Seconds part from the timestamp
+								var seconds = date.getSeconds();
+								var milliseconds = date.getMilliseconds();
+
+								// Will display time in 00:00:00 format
+								var formattedTime = day + " " + month + " " + year + " " + hours + ' : ' + minutes + 'm : ' + seconds + "s : " + milliseconds + "ms";
+								
+								
+								cell1.innerHTML = Number(temp[i].ts);
+								cell2.innerHTML = formattedTime;
+								cell3.innerHTML = Number(temp[i].value).toFixed(2) + "°";
+								cell0.innerHTML = dev[i].value;
+								
+
+					}
+
+						console.log(response);
+
+					
+					
+
+				}
+
+			};
+			
+			
+			var xhttp4 = new XMLHttpRequest();
+			xhttp4.open('GET', 'http://cloud.thingsboard.io/api/plugins/telemetry/DEVICE/c514f480-78b5-11ea-b99e-a33d0c6d5511/values/timeseries?keys=temperature,device&startTs='+ (currentTime - 600000) + '&endTs=' + currentTime + '&limit=60&agg=AVG');
+			xhttp4.setRequestHeader('Content-Type', 'application/json');
+			xhttp4.setRequestHeader('X-Authorization', 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYW5kcm8ubWlnbGlvcmU5NEBnbWFpbC5jb20iLCJzY29wZXMiOlsiVEVOQU5UX0FETUlOIl0sInVzZXJJZCI6ImY1ZDk0ZTEwLTY5NTQtMTFlYS04NzUxLWYxYjk3N2E0ZWFjNCIsImZpcnN0TmFtZSI6IkFsZXNzYW5kcm8iLCJsYXN0TmFtZSI6Ik1pZ2xpb3JlIiwiZW5hYmxlZCI6dHJ1ZSwicHJpdmFjeVBvbGljeUFjY2VwdGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiZjViODBhNzAtNjk1NC0xMWVhLTg3NTEtZjFiOTc3YTRlYWM0IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCIsImlzcyI6ImNsb3VkLnRoaW5nc2JvYXJkLmlvIiwiaWF0IjoxNTg2NDM2Nzg1LCJleHAiOjE1ODgyMzY3ODV9.lhE6yPWBqIu7Xk68icyU8sO8FJBrg3EnGxFuDc7BNTC1nfXzKpfp0t4VKEZsBn49A_3AgTPZ50EQigNhugWnqA');
+			xhttp4.send();
+			xhttp4.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					var response = JSON.parse(this.responseText);
+
+
+					var temp = response.temperature;
+					var dev = response.device;
+
+					for (var i = 0; i < temp.length; i++) {		
+
+							var table = document.getElementById("TabTemp3");
+
+							var row = table.insertRow();
+
+							var cell0 = row.insertCell(0);
+							var cell1 = row.insertCell(1);
+							var cell2 = row.insertCell(2);
+							var cell3 = row.insertCell(3);
+							
+								var date = new Date(temp[i].ts);
+								var year = date.getFullYear();
+								var month = months[date.getMonth()];
+								var day = date.getDate();
+								// Hours part from the timestamp
+								var hours = date.getHours();
+								// Minutes part from the timestamp
+								var minutes = date.getMinutes();
+								// Seconds part from the timestamp
+								var seconds = date.getSeconds();
+								var milliseconds = date.getMilliseconds();
+
+								// Will display time in 00:00:00 format
+								var formattedTime = day + " " + month + " " + year + " " + hours + ' : ' + minutes + 'm : ' + seconds + "s : " + milliseconds + "ms";
+								
+								
+								cell1.innerHTML = Number(temp[i].ts);
+								cell2.innerHTML = formattedTime;
+								cell3.innerHTML = Number(temp[i].value).toFixed(2) + "°";
+								cell0.innerHTML = dev[i].value;
+								
+
+					}
+
+						console.log(response);
+
+					
+					
+
+				}
+
+			};
+
+
+		}
+		
+		
+		
+		
+		
+		function LastHourHum() {
+			//Device 1
+			
+			
+			var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+			var currentTime = new Date().getTime();
+			var olderTime = currentTime - 3600000;
+
+
+            var xhttp = new XMLHttpRequest();
+			xhttp.open('GET', 'http://demo.thingsboard.io/api/plugins/telemetry/DEVICE/0cb57790-6954-11ea-9cdd-b3576b7d39f1/values/timeseries?keys=humidity,device&startTs='+ (currentTime - 600000) + '&endTs=' + currentTime + '&limit=60&agg=AVG');
+			xhttp.setRequestHeader('Content-Type', 'application/json');
+			xhttp.setRequestHeader('X-Authorization', 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYW5kcm8ubWlnbGlvcmU5NEBnbWFpbC5jb20iLCJzY29wZXMiOlsiVEVOQU5UX0FETUlOIl0sInVzZXJJZCI6IjAzN2RiMjAwLTY5NTQtMTFlYS1hNjhiLTdkMGVmMmE2ODJkMyIsImZpcnN0TmFtZSI6IkFsZXNzYW5kcm8iLCJsYXN0TmFtZSI6Ik1pZ2xpb3JlIiwiZW5hYmxlZCI6dHJ1ZSwicHJpdmFjeVBvbGljeUFjY2VwdGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMDM2ZmNmNTAtNjk1NC0xMWVhLWE2OGItN2QwZWYyYTY4MmQzIiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCIsImlzcyI6InRoaW5nc2JvYXJkLmlvIiwiaWF0IjoxNTg2NDM2NDY3LCJleHAiOjE1ODgyMzY0Njd9.gQLfSGaMvXkrjkBkYehrRZ4EEjRueFVuf1wjj6iz64eLYEsyv3qjK3-AQy8-Af8cUmObxvc6ytWcacVZ2bMxVw');
+			xhttp.send();
+			xhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					var response = JSON.parse(this.responseText);
+
+
+					var hum = response.humidity;
+					var dev = response.device;
+			
+
+					for (var i = 0; i < hum.length; i++) {		
+
+							var table = document.getElementById("TabHum");
+
+							var row = table.insertRow();
+
+							var cell0 = row.insertCell(0);
+							var cell1 = row.insertCell(1);
+							var cell2 = row.insertCell(2);
+							var cell3 = row.insertCell(3);
+							
+								var date = new Date(hum[i].ts);
+								var year = date.getFullYear();
+								var month = months[date.getMonth()];
+								var day = date.getDate();
+								// Hours part from the timestamp
+								var hours = date.getHours();
+								// Minutes part from the timestamp
+								var minutes = date.getMinutes();
+								// Seconds part from the timestamp
+								var seconds = date.getSeconds();
+								var milliseconds = date.getMilliseconds();
+
+								// Will display time in 00:00:00 format
+								var formattedTime = day + " " + month + " " + year + " " + hours + ' : ' + minutes + 'm : ' + seconds + "s : " + milliseconds + "ms";
+								
+								
+								cell1.innerHTML = Number(hum[i].ts);
+								cell2.innerHTML = formattedTime;
+								cell3.innerHTML = hum[i].value + "%";
+								cell0.innerHTML = dev[i].value;
+								
+
+						}
+
+						console.log(response);
+
+					
+					
+
+				}
+
+			};
+
+			//Device 2
+			
+			
+			var xhttp2 = new XMLHttpRequest();
+			xhttp2.open('GET', 'http://demo.thingsboard.io/api/plugins/telemetry/DEVICE/0cb80fa0-6954-11ea-9cdd-b3576b7d39f1/values/timeseries?keys=humidity,device&startTs='+ (currentTime - 600000) + '&endTs=' + currentTime + '&limit=60&agg=AVG');
+			xhttp2.setRequestHeader('Content-Type', 'application/json');
+			xhttp2.setRequestHeader('X-Authorization', 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYW5kcm8ubWlnbGlvcmU5NEBnbWFpbC5jb20iLCJzY29wZXMiOlsiVEVOQU5UX0FETUlOIl0sInVzZXJJZCI6IjAzN2RiMjAwLTY5NTQtMTFlYS1hNjhiLTdkMGVmMmE2ODJkMyIsImZpcnN0TmFtZSI6IkFsZXNzYW5kcm8iLCJsYXN0TmFtZSI6Ik1pZ2xpb3JlIiwiZW5hYmxlZCI6dHJ1ZSwicHJpdmFjeVBvbGljeUFjY2VwdGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMDM2ZmNmNTAtNjk1NC0xMWVhLWE2OGItN2QwZWYyYTY4MmQzIiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCIsImlzcyI6InRoaW5nc2JvYXJkLmlvIiwiaWF0IjoxNTg2NDM2NDY3LCJleHAiOjE1ODgyMzY0Njd9.gQLfSGaMvXkrjkBkYehrRZ4EEjRueFVuf1wjj6iz64eLYEsyv3qjK3-AQy8-Af8cUmObxvc6ytWcacVZ2bMxVw');
+			xhttp2.send();
+			xhttp2.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					var response = JSON.parse(this.responseText);
+
+
+					var hum = response.humidity;
+					var dev = response.device;
+			
+
+					for (var i = 0; i < hum.length; i++) {		
+							var table = document.getElementById("TabHum");
+
+							var row = table.insertRow();
+
+							var cell0 = row.insertCell(0);
+							var cell1 = row.insertCell(1);
+							var cell2 = row.insertCell(2);
+							var cell3 = row.insertCell(3);
+						
+
+							
+								var date = new Date(hum[i].ts);
+								var year = date.getFullYear();
+								var month = months[date.getMonth()];
+								var day = date.getDate();
+								// Hours part from the timestamp
+								var hours = date.getHours();
+								// Minutes part from the timestamp
+								var minutes = date.getMinutes();
+								// Seconds part from the timestamp
+								var seconds = date.getSeconds();
+								var milliseconds = date.getMilliseconds();
+
+								// Will display time in 00:00:00 format
+								var formattedTime = day + " " + month + " " + year + " " + hours + ' : ' + minutes + 'm : ' + seconds + "s : " + milliseconds + "ms";
+	
+								
+								cell1.innerHTML = Number(hum[i].ts);
+								cell2.innerHTML = formattedTime;
+								cell3.innerHTML = hum[i].value + "%";
+								cell0.innerHTML = dev[i].value;
+								
+
+					}
+
+						console.log(response);
+
+					
+
+				}
+
+			};
+
+
+		}
+
+
+			function LastHourHum2() {
+			//Device 1
+			
+			
+			var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+			var currentTime = new Date().getTime();
+			var olderTime = currentTime - 3600000;
+
+
+            var xhttp = new XMLHttpRequest();
+			xhttp.open('GET', 'http://demo.thingsboard.io/api/plugins/telemetry/DEVICE/fbe5d470-70e0-11ea-ad02-b3576b7d39f1/values/timeseries?keys=humidity,device&startTs='+ (currentTime - 600000) + '&endTs=' + currentTime + '&limit=60&agg=AVG');
+			xhttp.setRequestHeader('Content-Type', 'application/json');
+			xhttp.setRequestHeader('X-Authorization', 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYW5kcm8ubWlnbGlvcmU5NEBnbWFpbC5jb20iLCJzY29wZXMiOlsiVEVOQU5UX0FETUlOIl0sInVzZXJJZCI6IjAzN2RiMjAwLTY5NTQtMTFlYS1hNjhiLTdkMGVmMmE2ODJkMyIsImZpcnN0TmFtZSI6IkFsZXNzYW5kcm8iLCJsYXN0TmFtZSI6Ik1pZ2xpb3JlIiwiZW5hYmxlZCI6dHJ1ZSwicHJpdmFjeVBvbGljeUFjY2VwdGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMDM2ZmNmNTAtNjk1NC0xMWVhLWE2OGItN2QwZWYyYTY4MmQzIiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCIsImlzcyI6InRoaW5nc2JvYXJkLmlvIiwiaWF0IjoxNTg2NDM2NDY3LCJleHAiOjE1ODgyMzY0Njd9.gQLfSGaMvXkrjkBkYehrRZ4EEjRueFVuf1wjj6iz64eLYEsyv3qjK3-AQy8-Af8cUmObxvc6ytWcacVZ2bMxVw');
+			xhttp.send();
+			xhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					var response = JSON.parse(this.responseText);
+
+
+					var hum = response.humidity;
+					var dev = response.device;
+			
+
+					for (var i = 0; i < hum.length; i++) {		
+
+							var table = document.getElementById("TabHum2");
+
+							var row = table.insertRow();
+
+							var cell0 = row.insertCell(0);
+							var cell1 = row.insertCell(1);
+							var cell2 = row.insertCell(2);
+							var cell3 = row.insertCell(3);
+							
+								var date = new Date(hum[i].ts);
+								var year = date.getFullYear();
+								var month = months[date.getMonth()];
+								var day = date.getDate();
+								// Hours part from the timestamp
+								var hours = date.getHours();
+								// Minutes part from the timestamp
+								var minutes = date.getMinutes();
+								// Seconds part from the timestamp
+								var seconds = date.getSeconds();
+								var milliseconds = date.getMilliseconds();
+
+								// Will display time in 00:00:00 format
+								var formattedTime = day + " " + month + " " + year + " " + hours + ' : ' + minutes + 'm : ' + seconds + "s : " + milliseconds + "ms";
+								
+								
+								cell1.innerHTML = Number(hum[i].ts);
+								cell2.innerHTML = formattedTime;
+								cell3.innerHTML = hum[i].value + "%";
+								cell0.innerHTML = dev[i].value;
+								
+
+						}
+
+						console.log(response);
+
+					
+					
+
+				}
+
+			};
+}
+
+
+
+		function LastHourHum3() {
+			//Device 1
+			
+			
+			var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+			var currentTime = new Date().getTime();
+			var olderTime = currentTime - 3600000;
+
+
+            var xhttp = new XMLHttpRequest();
+			xhttp.open('GET', 'http://cloud.thingsboard.io/api/plugins/telemetry/DEVICE/c5681570-7824-11ea-b99e-a33d0c6d5511/values/timeseries?keys=humidity,device&startTs='+ (currentTime - 600000) + '&endTs=' + currentTime + '&limit=60&agg=AVG');
+			xhttp.setRequestHeader('Content-Type', 'application/json');
+			xhttp.setRequestHeader('X-Authorization', 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYW5kcm8ubWlnbGlvcmU5NEBnbWFpbC5jb20iLCJzY29wZXMiOlsiVEVOQU5UX0FETUlOIl0sInVzZXJJZCI6ImY1ZDk0ZTEwLTY5NTQtMTFlYS04NzUxLWYxYjk3N2E0ZWFjNCIsImZpcnN0TmFtZSI6IkFsZXNzYW5kcm8iLCJsYXN0TmFtZSI6Ik1pZ2xpb3JlIiwiZW5hYmxlZCI6dHJ1ZSwicHJpdmFjeVBvbGljeUFjY2VwdGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiZjViODBhNzAtNjk1NC0xMWVhLTg3NTEtZjFiOTc3YTRlYWM0IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCIsImlzcyI6ImNsb3VkLnRoaW5nc2JvYXJkLmlvIiwiaWF0IjoxNTg2NDM2Nzg1LCJleHAiOjE1ODgyMzY3ODV9.lhE6yPWBqIu7Xk68icyU8sO8FJBrg3EnGxFuDc7BNTC1nfXzKpfp0t4VKEZsBn49A_3AgTPZ50EQigNhugWnqA');
+			xhttp.send();
+			xhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					var response = JSON.parse(this.responseText);
+
+
+					var hum = response.humidity;
+					var dev = response.device;
+			
+
+					for (var i = 0; i < hum.length; i++) {		
+
+							var table = document.getElementById("TabHum3");
+
+							var row = table.insertRow();
+
+							var cell0 = row.insertCell(0);
+							var cell1 = row.insertCell(1);
+							var cell2 = row.insertCell(2);
+							var cell3 = row.insertCell(3);
+							
+								var date = new Date(hum[i].ts);
+								var year = date.getFullYear();
+								var month = months[date.getMonth()];
+								var day = date.getDate();
+								// Hours part from the timestamp
+								var hours = date.getHours();
+								// Minutes part from the timestamp
+								var minutes = date.getMinutes();
+								// Seconds part from the timestamp
+								var seconds = date.getSeconds();
+								var milliseconds = date.getMilliseconds();
+
+								// Will display time in 00:00:00 format
+								var formattedTime = day + " " + month + " " + year + " " + hours + ' : ' + minutes + 'm : ' + seconds + "s : " + milliseconds + "ms";
+								
+								
+								cell1.innerHTML = Number(hum[i].ts);
+								cell2.innerHTML = formattedTime;
+								cell3.innerHTML = hum[i].value + "%";
+								cell0.innerHTML = dev[i].value;
+								
+
+						}
+
+						console.log(response);
+
+					
+					
+
+				}
+
+			};
+
+			//Device 2
+			
+			
+			var xhttp2 = new XMLHttpRequest();
+			xhttp2.open('GET', 'http://cloud.thingsboard.io/api/plugins/telemetry/DEVICE/4fa1f180-7d6a-11ea-b99e-a33d0c6d5511/values/timeseries?keys=humidity,device&startTs='+ (currentTime - 600000) + '&endTs=' + currentTime + '&limit=60&agg=AVG');
+			xhttp2.setRequestHeader('Content-Type', 'application/json');
+			xhttp2.setRequestHeader('X-Authorization', 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYW5kcm8ubWlnbGlvcmU5NEBnbWFpbC5jb20iLCJzY29wZXMiOlsiVEVOQU5UX0FETUlOIl0sInVzZXJJZCI6ImY1ZDk0ZTEwLTY5NTQtMTFlYS04NzUxLWYxYjk3N2E0ZWFjNCIsImZpcnN0TmFtZSI6IkFsZXNzYW5kcm8iLCJsYXN0TmFtZSI6Ik1pZ2xpb3JlIiwiZW5hYmxlZCI6dHJ1ZSwicHJpdmFjeVBvbGljeUFjY2VwdGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiZjViODBhNzAtNjk1NC0xMWVhLTg3NTEtZjFiOTc3YTRlYWM0IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCIsImlzcyI6ImNsb3VkLnRoaW5nc2JvYXJkLmlvIiwiaWF0IjoxNTg2NDM2Nzg1LCJleHAiOjE1ODgyMzY3ODV9.lhE6yPWBqIu7Xk68icyU8sO8FJBrg3EnGxFuDc7BNTC1nfXzKpfp0t4VKEZsBn49A_3AgTPZ50EQigNhugWnqA');
+			xhttp2.send();
+			xhttp2.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					var response = JSON.parse(this.responseText);
+
+
+					var hum = response.humidity;
+					var dev = response.device;
+			
+
+					for (var i = 0; i < hum.length; i++) {		
+							var table = document.getElementById("TabHum3");
+
+							var row = table.insertRow();
+
+							var cell0 = row.insertCell(0);
+							var cell1 = row.insertCell(1);
+							var cell2 = row.insertCell(2);
+							var cell3 = row.insertCell(3);
+						
+
+							
+								var date = new Date(hum[i].ts);
+								var year = date.getFullYear();
+								var month = months[date.getMonth()];
+								var day = date.getDate();
+								// Hours part from the timestamp
+								var hours = date.getHours();
+								// Minutes part from the timestamp
+								var minutes = date.getMinutes();
+								// Seconds part from the timestamp
+								var seconds = date.getSeconds();
+								var milliseconds = date.getMilliseconds();
+
+								// Will display time in 00:00:00 format
+								var formattedTime = day + " " + month + " " + year + " " + hours + ' : ' + minutes + 'm : ' + seconds + "s : " + milliseconds + "ms";
+	
+								
+								cell1.innerHTML = Number(hum[i].ts);
+								cell2.innerHTML = formattedTime;
+								cell3.innerHTML = hum[i].value + "%";
+								cell0.innerHTML = dev[i].value;
+								
+
+					}
+
+						console.log(response);
+
+					
+
+				}
+
+			};
+			
+			var xhttp3 = new XMLHttpRequest();
+			xhttp3.open('GET', 'http://cloud.thingsboard.io/api/plugins/telemetry/DEVICE/0ecb9900-7d6e-11ea-b99e-a33d0c6d5511/values/timeseries?keys=humidity,device&startTs='+ (currentTime - 600000) + '&endTs=' + currentTime + '&limit=60&agg=AVG');
+			xhttp3.setRequestHeader('Content-Type', 'application/json');
+			xhttp3.setRequestHeader('X-Authorization', 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYW5kcm8ubWlnbGlvcmU5NEBnbWFpbC5jb20iLCJzY29wZXMiOlsiVEVOQU5UX0FETUlOIl0sInVzZXJJZCI6ImY1ZDk0ZTEwLTY5NTQtMTFlYS04NzUxLWYxYjk3N2E0ZWFjNCIsImZpcnN0TmFtZSI6IkFsZXNzYW5kcm8iLCJsYXN0TmFtZSI6Ik1pZ2xpb3JlIiwiZW5hYmxlZCI6dHJ1ZSwicHJpdmFjeVBvbGljeUFjY2VwdGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiZjViODBhNzAtNjk1NC0xMWVhLTg3NTEtZjFiOTc3YTRlYWM0IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCIsImlzcyI6ImNsb3VkLnRoaW5nc2JvYXJkLmlvIiwiaWF0IjoxNTg2NDM2Nzg1LCJleHAiOjE1ODgyMzY3ODV9.lhE6yPWBqIu7Xk68icyU8sO8FJBrg3EnGxFuDc7BNTC1nfXzKpfp0t4VKEZsBn49A_3AgTPZ50EQigNhugWnqA');
+			xhttp3.send();
+			xhttp3.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					var response = JSON.parse(this.responseText);
+
+
+					var hum = response.humidity;
+					var dev = response.device;
+			
+
+					for (var i = 0; i < hum.length; i++) {		
+							var table = document.getElementById("TabHum3");
+
+							var row = table.insertRow();
+
+							var cell0 = row.insertCell(0);
+							var cell1 = row.insertCell(1);
+							var cell2 = row.insertCell(2);
+							var cell3 = row.insertCell(3);
+						
+
+							
+								var date = new Date(hum[i].ts);
+								var year = date.getFullYear();
+								var month = months[date.getMonth()];
+								var day = date.getDate();
+								// Hours part from the timestamp
+								var hours = date.getHours();
+								// Minutes part from the timestamp
+								var minutes = date.getMinutes();
+								// Seconds part from the timestamp
+								var seconds = date.getSeconds();
+								var milliseconds = date.getMilliseconds();
+
+								// Will display time in 00:00:00 format
+								var formattedTime = day + " " + month + " " + year + " " + hours + ' : ' + minutes + 'm : ' + seconds + "s : " + milliseconds + "ms";
+	
+								
+								cell1.innerHTML = Number(hum[i].ts);
+								cell2.innerHTML = formattedTime;
+								cell3.innerHTML = hum[i].value + "%";
+								cell0.innerHTML = dev[i].value;
+								
+
+					}
+
+						console.log(response);
+
+					
+
+				}
+
+			};
+			
+			
+			var xhttp4 = new XMLHttpRequest();
+			xhttp4.open('GET', 'http://cloud.thingsboard.io/api/plugins/telemetry/DEVICE/c514f480-78b5-11ea-b99e-a33d0c6d5511/values/timeseries?keys=humidity,device&startTs='+ (currentTime - 600000) + '&endTs=' + currentTime + '&limit=60&agg=AVG');
+			xhttp4.setRequestHeader('Content-Type', 'application/json');
+			xhttp4.setRequestHeader('X-Authorization', 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYW5kcm8ubWlnbGlvcmU5NEBnbWFpbC5jb20iLCJzY29wZXMiOlsiVEVOQU5UX0FETUlOIl0sInVzZXJJZCI6ImY1ZDk0ZTEwLTY5NTQtMTFlYS04NzUxLWYxYjk3N2E0ZWFjNCIsImZpcnN0TmFtZSI6IkFsZXNzYW5kcm8iLCJsYXN0TmFtZSI6Ik1pZ2xpb3JlIiwiZW5hYmxlZCI6dHJ1ZSwicHJpdmFjeVBvbGljeUFjY2VwdGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiZjViODBhNzAtNjk1NC0xMWVhLTg3NTEtZjFiOTc3YTRlYWM0IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCIsImlzcyI6ImNsb3VkLnRoaW5nc2JvYXJkLmlvIiwiaWF0IjoxNTg2NDM2Nzg1LCJleHAiOjE1ODgyMzY3ODV9.lhE6yPWBqIu7Xk68icyU8sO8FJBrg3EnGxFuDc7BNTC1nfXzKpfp0t4VKEZsBn49A_3AgTPZ50EQigNhugWnqA');
+			xhttp4.send();
+			xhttp4.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					var response = JSON.parse(this.responseText);
+
+
+					var hum = response.humidity;
+					var dev = response.device;
+			
+
+					for (var i = 0; i < hum.length; i++) {		
+							var table = document.getElementById("TabHum3");
+
+							var row = table.insertRow();
+
+							var cell0 = row.insertCell(0);
+							var cell1 = row.insertCell(1);
+							var cell2 = row.insertCell(2);
+							var cell3 = row.insertCell(3);
+						
+
+							
+								var date = new Date(hum[i].ts);
+								var year = date.getFullYear();
+								var month = months[date.getMonth()];
+								var day = date.getDate();
+								// Hours part from the timestamp
+								var hours = date.getHours();
+								// Minutes part from the timestamp
+								var minutes = date.getMinutes();
+								// Seconds part from the timestamp
+								var seconds = date.getSeconds();
+								var milliseconds = date.getMilliseconds();
+
+								// Will display time in 00:00:00 format
+								var formattedTime = day + " " + month + " " + year + " " + hours + ' : ' + minutes + 'm : ' + seconds + "s : " + milliseconds + "ms";
+	
+								
+								cell1.innerHTML = Number(hum[i].ts);
+								cell2.innerHTML = formattedTime;
+								cell3.innerHTML = hum[i].value + "%";
+								cell0.innerHTML = dev[i].value;
+								
+
+					}
+
+						console.log(response);
+
+					
+
+				}
+
+			};
+
+
+		}
+
+		function LastHourDir() {
+			//Device 1
+			var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+			var currentTime = new Date().getTime();
+			var olderTime = currentTime - 3600000;
+
+
+            var xhttp = new XMLHttpRequest();
+			xhttp.open('GET', 'http://demo.thingsboard.io/api/plugins/telemetry/DEVICE/0cb57790-6954-11ea-9cdd-b3576b7d39f1/values/timeseries?keys=windDirection,device&startTs='+ (currentTime - 600000) + '&endTs=' + currentTime + '&limit=60&agg=AVG');
+			xhttp.setRequestHeader('Content-Type', 'application/json');
+			xhttp.setRequestHeader('X-Authorization', 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYW5kcm8ubWlnbGlvcmU5NEBnbWFpbC5jb20iLCJzY29wZXMiOlsiVEVOQU5UX0FETUlOIl0sInVzZXJJZCI6IjAzN2RiMjAwLTY5NTQtMTFlYS1hNjhiLTdkMGVmMmE2ODJkMyIsImZpcnN0TmFtZSI6IkFsZXNzYW5kcm8iLCJsYXN0TmFtZSI6Ik1pZ2xpb3JlIiwiZW5hYmxlZCI6dHJ1ZSwicHJpdmFjeVBvbGljeUFjY2VwdGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMDM2ZmNmNTAtNjk1NC0xMWVhLWE2OGItN2QwZWYyYTY4MmQzIiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCIsImlzcyI6InRoaW5nc2JvYXJkLmlvIiwiaWF0IjoxNTg2NDM2NDY3LCJleHAiOjE1ODgyMzY0Njd9.gQLfSGaMvXkrjkBkYehrRZ4EEjRueFVuf1wjj6iz64eLYEsyv3qjK3-AQy8-Af8cUmObxvc6ytWcacVZ2bMxVw');
+			xhttp.send();
+			xhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					var response = JSON.parse(this.responseText);
+
+
+					var dir = response.windDirection;
+					var dev = response.device;
+					
+
+					for (var i = 0; i < dir.length; i++) {		
+
+							var table = document.getElementById("TabDir");
+
+							var row = table.insertRow();
+
+							var cell0 = row.insertCell(0);
+							var cell1 = row.insertCell(1);
+							var cell2 = row.insertCell(2);
+							var cell3 = row.insertCell(3);
+							
+								var date = new Date(dir[i].ts);
+								var year = date.getFullYear();
+								var month = months[date.getMonth()];
+								var day = date.getDate();
+								// Hours part from the timestamp
+								var hours = date.getHours();
+								// Minutes part from the timestamp
+								var minutes = date.getMinutes();
+								// Seconds part from the timestamp
+								var seconds = date.getSeconds();
+								var milliseconds = date.getMilliseconds();
+
+								// Will display time in 00:00:00 format
+								var formattedTime = day + " " + month + " " + year + " " + hours + ' : ' + minutes + 'm : ' + seconds + "s : " + milliseconds + "ms";
+								
+								
+								cell1.innerHTML = Number(dir[i].ts);
+								cell2.innerHTML = formattedTime;
+								cell3.innerHTML = dir[i].value + "°";
+								cell0.innerHTML = dev[i].value;
+								
+
+						}
+
+						console.log(response);
+
+				
+
+				}
+
+			};
+
+			//Device 2
+			var xhttp2 = new XMLHttpRequest();
+			xhttp2.open('GET', 'http://demo.thingsboard.io/api/plugins/telemetry/DEVICE/0cb80fa0-6954-11ea-9cdd-b3576b7d39f1/values/timeseries?keys=windDirection,device&startTs='+ (currentTime - 600000) + '&endTs=' + currentTime + '&limit=60&agg=AVG');
+			xhttp2.setRequestHeader('Content-Type', 'application/json');
+			xhttp2.setRequestHeader('X-Authorization', 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYW5kcm8ubWlnbGlvcmU5NEBnbWFpbC5jb20iLCJzY29wZXMiOlsiVEVOQU5UX0FETUlOIl0sInVzZXJJZCI6IjAzN2RiMjAwLTY5NTQtMTFlYS1hNjhiLTdkMGVmMmE2ODJkMyIsImZpcnN0TmFtZSI6IkFsZXNzYW5kcm8iLCJsYXN0TmFtZSI6Ik1pZ2xpb3JlIiwiZW5hYmxlZCI6dHJ1ZSwicHJpdmFjeVBvbGljeUFjY2VwdGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMDM2ZmNmNTAtNjk1NC0xMWVhLWE2OGItN2QwZWYyYTY4MmQzIiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCIsImlzcyI6InRoaW5nc2JvYXJkLmlvIiwiaWF0IjoxNTg2NDM2NDY3LCJleHAiOjE1ODgyMzY0Njd9.gQLfSGaMvXkrjkBkYehrRZ4EEjRueFVuf1wjj6iz64eLYEsyv3qjK3-AQy8-Af8cUmObxvc6ytWcacVZ2bMxVw');
+			xhttp2.send();
+			xhttp2.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					var response = JSON.parse(this.responseText);
+
+
+					var dir = response.windDirection;
+					var dev = response.device;
+					
+
+					for (var i = 0; i < dir.length; i++) {		
+
+							var table = document.getElementById("TabDir");
+
+							var row = table.insertRow();
+
+							var cell0 = row.insertCell(0);
+							var cell1 = row.insertCell(1);
+							var cell2 = row.insertCell(2);
+							var cell3 = row.insertCell(3);
+							
+								var date = new Date(dir[i].ts);
+								var year = date.getFullYear();
+								var month = months[date.getMonth()];
+								var day = date.getDate();
+								// Hours part from the timestamp
+								var hours = date.getHours();
+								// Minutes part from the timestamp
+								var minutes = date.getMinutes();
+								// Seconds part from the timestamp
+								var seconds = date.getSeconds();
+								var milliseconds = date.getMilliseconds();
+
+								// Will display time in 00:00:00 format
+								var formattedTime = day + " " + month + " " + year + " " + hours + ' : ' + minutes + 'm : ' + seconds + "s : " + milliseconds + "ms";
+								
+								
+								cell1.innerHTML = Number(dir[i].ts);
+								cell2.innerHTML = formattedTime;
+								cell3.innerHTML = dir[i].value + "°";
+								cell0.innerHTML = dev[i].value;
+								
+
+					}
+
+						console.log(response);
+
+					
+					
+
+				}
+
+			};
+
+
+		}
+		
+		
+		
+		function LastHourDir2() {
+			//Device 1
+			var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+			var currentTime = new Date().getTime();
+			var olderTime = currentTime - 3600000;
+
+
+            var xhttp = new XMLHttpRequest();
+			xhttp.open('GET', 'http://demo.thingsboard.io/api/plugins/telemetry/DEVICE/fbe5d470-70e0-11ea-ad02-b3576b7d39f1/values/timeseries?keys=windDirection,device&startTs='+ (currentTime - 600000) + '&endTs=' + currentTime + '&limit=60&agg=AVG');
+			xhttp.setRequestHeader('Content-Type', 'application/json');
+			xhttp.setRequestHeader('X-Authorization', 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYW5kcm8ubWlnbGlvcmU5NEBnbWFpbC5jb20iLCJzY29wZXMiOlsiVEVOQU5UX0FETUlOIl0sInVzZXJJZCI6IjAzN2RiMjAwLTY5NTQtMTFlYS1hNjhiLTdkMGVmMmE2ODJkMyIsImZpcnN0TmFtZSI6IkFsZXNzYW5kcm8iLCJsYXN0TmFtZSI6Ik1pZ2xpb3JlIiwiZW5hYmxlZCI6dHJ1ZSwicHJpdmFjeVBvbGljeUFjY2VwdGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMDM2ZmNmNTAtNjk1NC0xMWVhLWE2OGItN2QwZWYyYTY4MmQzIiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCIsImlzcyI6InRoaW5nc2JvYXJkLmlvIiwiaWF0IjoxNTg2NDM2NDY3LCJleHAiOjE1ODgyMzY0Njd9.gQLfSGaMvXkrjkBkYehrRZ4EEjRueFVuf1wjj6iz64eLYEsyv3qjK3-AQy8-Af8cUmObxvc6ytWcacVZ2bMxVw');
+			xhttp.send();
+			xhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					var response = JSON.parse(this.responseText);
+
+
+					var dir = response.windDirection;
+					var dev = response.device;
+					
+
+					for (var i = 0; i < dir.length; i++) {		
+
+							var table = document.getElementById("TabDir2");
+
+							var row = table.insertRow();
+
+							var cell0 = row.insertCell(0);
+							var cell1 = row.insertCell(1);
+							var cell2 = row.insertCell(2);
+							var cell3 = row.insertCell(3);
+							
+								var date = new Date(dir[i].ts);
+								var year = date.getFullYear();
+								var month = months[date.getMonth()];
+								var day = date.getDate();
+								// Hours part from the timestamp
+								var hours = date.getHours();
+								// Minutes part from the timestamp
+								var minutes = date.getMinutes();
+								// Seconds part from the timestamp
+								var seconds = date.getSeconds();
+								var milliseconds = date.getMilliseconds();
+
+								// Will display time in 00:00:00 format
+								var formattedTime = day + " " + month + " " + year + " " + hours + ' : ' + minutes + 'm : ' + seconds + "s : " + milliseconds + "ms";
+								
+								
+								cell1.innerHTML = Number(dir[i].ts);
+								cell2.innerHTML = formattedTime;
+								cell3.innerHTML = dir[i].value + "°";
+								cell0.innerHTML = dev[i].value;
+								
+
+						}
+
+						console.log(response);
+
+				
+
+				}
+
+			};
+			}
+			
+			
+			
+					function LastHourDir3() {
+			//Device 1
+			var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+			var currentTime = new Date().getTime();
+			var olderTime = currentTime - 3600000;
+
+
+            var xhttp = new XMLHttpRequest();
+			xhttp.open('GET', 'http://cloud.thingsboard.io/api/plugins/telemetry/DEVICE/0ecb9900-7d6e-11ea-b99e-a33d0c6d5511/values/timeseries?keys=windDirection,device&startTs='+ (currentTime - 600000) + '&endTs=' + currentTime + '&limit=60&agg=AVG');
+			xhttp.setRequestHeader('Content-Type', 'application/json');
+			xhttp.setRequestHeader('X-Authorization', 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYW5kcm8ubWlnbGlvcmU5NEBnbWFpbC5jb20iLCJzY29wZXMiOlsiVEVOQU5UX0FETUlOIl0sInVzZXJJZCI6ImY1ZDk0ZTEwLTY5NTQtMTFlYS04NzUxLWYxYjk3N2E0ZWFjNCIsImZpcnN0TmFtZSI6IkFsZXNzYW5kcm8iLCJsYXN0TmFtZSI6Ik1pZ2xpb3JlIiwiZW5hYmxlZCI6dHJ1ZSwicHJpdmFjeVBvbGljeUFjY2VwdGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiZjViODBhNzAtNjk1NC0xMWVhLTg3NTEtZjFiOTc3YTRlYWM0IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCIsImlzcyI6ImNsb3VkLnRoaW5nc2JvYXJkLmlvIiwiaWF0IjoxNTg2NDM2Nzg1LCJleHAiOjE1ODgyMzY3ODV9.lhE6yPWBqIu7Xk68icyU8sO8FJBrg3EnGxFuDc7BNTC1nfXzKpfp0t4VKEZsBn49A_3AgTPZ50EQigNhugWnqA');
+			xhttp.send();
+			xhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					var response = JSON.parse(this.responseText);
+
+
+					var dir = response.windDirection;
+					var dev = response.device;
+					
+
+					for (var i = 0; i < dir.length; i++) {		
+
+							var table = document.getElementById("TabDir3");
+
+							var row = table.insertRow();
+
+							var cell0 = row.insertCell(0);
+							var cell1 = row.insertCell(1);
+							var cell2 = row.insertCell(2);
+							var cell3 = row.insertCell(3);
+							
+								var date = new Date(dir[i].ts);
+								var year = date.getFullYear();
+								var month = months[date.getMonth()];
+								var day = date.getDate();
+								// Hours part from the timestamp
+								var hours = date.getHours();
+								// Minutes part from the timestamp
+								var minutes = date.getMinutes();
+								// Seconds part from the timestamp
+								var seconds = date.getSeconds();
+								var milliseconds = date.getMilliseconds();
+
+								// Will display time in 00:00:00 format
+								var formattedTime = day + " " + month + " " + year + " " + hours + ' : ' + minutes + 'm : ' + seconds + "s : " + milliseconds + "ms";
+								
+								
+								cell1.innerHTML = Number(dir[i].ts);
+								cell2.innerHTML = formattedTime;
+								cell3.innerHTML = dir[i].value + "°";
+								cell0.innerHTML = dev[i].value;
+								
+
+						}
+
+						console.log(response);
+
+				
+
+				}
+
+			};
+
+			//Device 2
+			var xhttp2 = new XMLHttpRequest();
+			xhttp2.open('GET', 'http://cloud.thingsboard.io/api/plugins/telemetry/DEVICE/c514f480-78b5-11ea-b99e-a33d0c6d5511/values/timeseries?keys=windDirection,device&startTs='+ (currentTime - 600000) + '&endTs=' + currentTime + '&limit=60&agg=AVG');
+			xhttp2.setRequestHeader('Content-Type', 'application/json');
+			xhttp2.setRequestHeader('X-Authorization', 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYW5kcm8ubWlnbGlvcmU5NEBnbWFpbC5jb20iLCJzY29wZXMiOlsiVEVOQU5UX0FETUlOIl0sInVzZXJJZCI6ImY1ZDk0ZTEwLTY5NTQtMTFlYS04NzUxLWYxYjk3N2E0ZWFjNCIsImZpcnN0TmFtZSI6IkFsZXNzYW5kcm8iLCJsYXN0TmFtZSI6Ik1pZ2xpb3JlIiwiZW5hYmxlZCI6dHJ1ZSwicHJpdmFjeVBvbGljeUFjY2VwdGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiZjViODBhNzAtNjk1NC0xMWVhLTg3NTEtZjFiOTc3YTRlYWM0IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCIsImlzcyI6ImNsb3VkLnRoaW5nc2JvYXJkLmlvIiwiaWF0IjoxNTg2NDM2Nzg1LCJleHAiOjE1ODgyMzY3ODV9.lhE6yPWBqIu7Xk68icyU8sO8FJBrg3EnGxFuDc7BNTC1nfXzKpfp0t4VKEZsBn49A_3AgTPZ50EQigNhugWnqA');
+			xhttp2.send();
+			xhttp2.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					var response = JSON.parse(this.responseText);
+
+
+					var dir = response.windDirection;
+					var dev = response.device;
+					
+
+					for (var i = 0; i < dir.length; i++) {		
+
+							var table = document.getElementById("TabDir3");
+
+							var row = table.insertRow();
+
+							var cell0 = row.insertCell(0);
+							var cell1 = row.insertCell(1);
+							var cell2 = row.insertCell(2);
+							var cell3 = row.insertCell(3);
+							
+								var date = new Date(dir[i].ts);
+								var year = date.getFullYear();
+								var month = months[date.getMonth()];
+								var day = date.getDate();
+								// Hours part from the timestamp
+								var hours = date.getHours();
+								// Minutes part from the timestamp
+								var minutes = date.getMinutes();
+								// Seconds part from the timestamp
+								var seconds = date.getSeconds();
+								var milliseconds = date.getMilliseconds();
+
+								// Will display time in 00:00:00 format
+								var formattedTime = day + " " + month + " " + year + " " + hours + ' : ' + minutes + 'm : ' + seconds + "s : " + milliseconds + "ms";
+								
+								
+								cell1.innerHTML = Number(dir[i].ts);
+								cell2.innerHTML = formattedTime;
+								cell3.innerHTML = dir[i].value + "°";
+								cell0.innerHTML = dev[i].value;
+								
+
+					}
+
+						console.log(response);
+
+					
+					
+
+				}
+
+			};
+
+
+		}
+
+		function LastHourInt() {
+			//Device 1
+			var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+			var currentTime = new Date().getTime();
+			var olderTime = currentTime - 3600000;
+
+
+            var xhttp = new XMLHttpRequest();
+			xhttp.open('GET', 'http://demo.thingsboard.io/api/plugins/telemetry/DEVICE/0cb57790-6954-11ea-9cdd-b3576b7d39f1/values/timeseries?keys=temperature,humidity,windDirection,windIntensity,rainHeight,device&startTs='+ (currentTime - 600000) + '&endTs=' + currentTime + '&limit=60&agg=AVG');
+			xhttp.setRequestHeader('Content-Type', 'application/json');
+			xhttp.setRequestHeader('X-Authorization', 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYW5kcm8ubWlnbGlvcmU5NEBnbWFpbC5jb20iLCJzY29wZXMiOlsiVEVOQU5UX0FETUlOIl0sInVzZXJJZCI6IjAzN2RiMjAwLTY5NTQtMTFlYS1hNjhiLTdkMGVmMmE2ODJkMyIsImZpcnN0TmFtZSI6IkFsZXNzYW5kcm8iLCJsYXN0TmFtZSI6Ik1pZ2xpb3JlIiwiZW5hYmxlZCI6dHJ1ZSwicHJpdmFjeVBvbGljeUFjY2VwdGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMDM2ZmNmNTAtNjk1NC0xMWVhLWE2OGItN2QwZWYyYTY4MmQzIiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCIsImlzcyI6InRoaW5nc2JvYXJkLmlvIiwiaWF0IjoxNTg2NDM2NDY3LCJleHAiOjE1ODgyMzY0Njd9.gQLfSGaMvXkrjkBkYehrRZ4EEjRueFVuf1wjj6iz64eLYEsyv3qjK3-AQy8-Af8cUmObxvc6ytWcacVZ2bMxVw');
+			xhttp.send();
+			xhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					var response = JSON.parse(this.responseText);
+
+
+					var int = response.windIntensity;
+					var dev = response.device;
+					
+
+					for (var i = 0; i < int.length; i++) {		
+
+							var table = document.getElementById("TabInt");
+
+							var row = table.insertRow();
+
+							var cell0 = row.insertCell(0);
+							var cell1 = row.insertCell(1);
+							var cell2 = row.insertCell(2);
+							var cell3 = row.insertCell(3);
+							
+								var date = new Date(int[i].ts);
+								var year = date.getFullYear();
+								var month = months[date.getMonth()];
+								var day = date.getDate();
+								// Hours part from the timestamp
+								var hours = date.getHours();
+								// Minutes part from the timestamp
+								var minutes = date.getMinutes();
+								// Seconds part from the timestamp
+								var seconds = date.getSeconds();
+								var milliseconds = date.getMilliseconds();
+
+								// Will display time in 00:00:00 format
+								var formattedTime = day + " " + month + " " + year + " " + hours + ' : ' + minutes + 'm : ' + seconds + "s : " + milliseconds + "ms";
+								
+								
+								cell1.innerHTML = Number(int[i].ts);
+								cell2.innerHTML = formattedTime;
+								cell3.innerHTML = int[i].value + "m/s";
+								cell0.innerHTML = dev[i].value;
+								
+
+						}
+
+						console.log(response);
+
+					
+
+				}
+
+			};
+
+			//Device 2
+			var xhttp2 = new XMLHttpRequest();
+			xhttp2.open('GET', 'http://demo.thingsboard.io/api/plugins/telemetry/DEVICE/0cb80fa0-6954-11ea-9cdd-b3576b7d39f1/values/timeseries?keys=temperature,humidity,windDirection,windIntensity,rainHeight,device&startTs='+ (currentTime - 600000) + '&endTs=' + currentTime + '&limit=60&agg=AVG');
+			xhttp2.setRequestHeader('Content-Type', 'application/json');
+			xhttp2.setRequestHeader('X-Authorization', 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYW5kcm8ubWlnbGlvcmU5NEBnbWFpbC5jb20iLCJzY29wZXMiOlsiVEVOQU5UX0FETUlOIl0sInVzZXJJZCI6IjAzN2RiMjAwLTY5NTQtMTFlYS1hNjhiLTdkMGVmMmE2ODJkMyIsImZpcnN0TmFtZSI6IkFsZXNzYW5kcm8iLCJsYXN0TmFtZSI6Ik1pZ2xpb3JlIiwiZW5hYmxlZCI6dHJ1ZSwicHJpdmFjeVBvbGljeUFjY2VwdGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMDM2ZmNmNTAtNjk1NC0xMWVhLWE2OGItN2QwZWYyYTY4MmQzIiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCIsImlzcyI6InRoaW5nc2JvYXJkLmlvIiwiaWF0IjoxNTg2NDM2NDY3LCJleHAiOjE1ODgyMzY0Njd9.gQLfSGaMvXkrjkBkYehrRZ4EEjRueFVuf1wjj6iz64eLYEsyv3qjK3-AQy8-Af8cUmObxvc6ytWcacVZ2bMxVw');
+			xhttp2.send();
+			xhttp2.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					var response = JSON.parse(this.responseText);
+
+
+					var int = response.windIntensity;
+					var dev = response.device;
+					
+					for (var i = 0; i < int.length; i++) {		
+
+							var table = document.getElementById("TabInt");
+
+							var row = table.insertRow();
+
+							var cell0 = row.insertCell(0);
+							var cell1 = row.insertCell(1);
+							var cell2 = row.insertCell(2);
+							var cell3 = row.insertCell(3);
+							
+								var date = new Date(int[i].ts);
+								var year = date.getFullYear();
+								var month = months[date.getMonth()];
+								var day = date.getDate();
+								// Hours part from the timestamp
+								var hours = date.getHours();
+								// Minutes part from the timestamp
+								var minutes = date.getMinutes();
+								// Seconds part from the timestamp
+								var seconds = date.getSeconds();
+								var milliseconds = date.getMilliseconds();
+
+								// Will display time in 00:00:00 format
+								var formattedTime = day + " " + month + " " + year + " " + hours + ' : ' + minutes + 'm : ' + seconds + "s : " + milliseconds + "ms";
+								
+								cell1.innerHTML = Number(int[i].ts);
+								cell2.innerHTML = formattedTime;
+								cell3.innerHTML = int[i].value + "%";
+								cell0.innerHTML = dev[i].value;
+							
+
+					}
+
+						console.log(response);
+
+					
+					
+
+				}
+
+			};
+
+
+		}
+		
+		
+		
+		function LastHourInt2() {
+			//Device 1
+			var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+			var currentTime = new Date().getTime();
+			var olderTime = currentTime - 3600000;
+
+
+            var xhttp = new XMLHttpRequest();
+			xhttp.open('GET', 'http://demo.thingsboard.io/api/plugins/telemetry/DEVICE/fbe5d470-70e0-11ea-ad02-b3576b7d39f1/values/timeseries?keys=temperature,humidity,windDirection,windIntensity,rainHeight,device&startTs='+ (currentTime - 600000) + '&endTs=' + currentTime + '&limit=60&agg=AVG');
+			xhttp.setRequestHeader('Content-Type', 'application/json');
+			xhttp.setRequestHeader('X-Authorization', 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYW5kcm8ubWlnbGlvcmU5NEBnbWFpbC5jb20iLCJzY29wZXMiOlsiVEVOQU5UX0FETUlOIl0sInVzZXJJZCI6IjAzN2RiMjAwLTY5NTQtMTFlYS1hNjhiLTdkMGVmMmE2ODJkMyIsImZpcnN0TmFtZSI6IkFsZXNzYW5kcm8iLCJsYXN0TmFtZSI6Ik1pZ2xpb3JlIiwiZW5hYmxlZCI6dHJ1ZSwicHJpdmFjeVBvbGljeUFjY2VwdGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMDM2ZmNmNTAtNjk1NC0xMWVhLWE2OGItN2QwZWYyYTY4MmQzIiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCIsImlzcyI6InRoaW5nc2JvYXJkLmlvIiwiaWF0IjoxNTg2NDM2NDY3LCJleHAiOjE1ODgyMzY0Njd9.gQLfSGaMvXkrjkBkYehrRZ4EEjRueFVuf1wjj6iz64eLYEsyv3qjK3-AQy8-Af8cUmObxvc6ytWcacVZ2bMxVw');
+			xhttp.send();
+			xhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					var response = JSON.parse(this.responseText);
+
+
+					var int = response.windIntensity;
+					var dev = response.device;
+					
+
+					for (var i = 0; i < int.length; i++) {		
+
+							var table = document.getElementById("TabInt2");
+
+							var row = table.insertRow();
+
+							var cell0 = row.insertCell(0);
+							var cell1 = row.insertCell(1);
+							var cell2 = row.insertCell(2);
+							var cell3 = row.insertCell(3);
+							
+								var date = new Date(int[i].ts);
+								var year = date.getFullYear();
+								var month = months[date.getMonth()];
+								var day = date.getDate();
+								// Hours part from the timestamp
+								var hours = date.getHours();
+								// Minutes part from the timestamp
+								var minutes = date.getMinutes();
+								// Seconds part from the timestamp
+								var seconds = date.getSeconds();
+								var milliseconds = date.getMilliseconds();
+
+								// Will display time in 00:00:00 format
+								var formattedTime = day + " " + month + " " + year + " " + hours + ' : ' + minutes + 'm : ' + seconds + "s : " + milliseconds + "ms";
+								
+								
+								cell1.innerHTML = Number(int[i].ts);
+								cell2.innerHTML = formattedTime;
+								cell3.innerHTML = int[i].value + "m/s";
+								cell0.innerHTML = dev[i].value;
+								
+
+						}
+
+						console.log(response);
+
+					
+
+				}
+
+			};
+			}
+			
+			
+			
+			function LastHourInt3() {
+			//Device 1
+			var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+			var currentTime = new Date().getTime();
+			var olderTime = currentTime - 3600000;
+
+
+            var xhttp = new XMLHttpRequest();
+			xhttp.open('GET', 'http://cloud.thingsboard.io/api/plugins/telemetry/DEVICE/0ecb9900-7d6e-11ea-b99e-a33d0c6d5511/values/timeseries?keys=temperature,humidity,windDirection,windIntensity,rainHeight,device&startTs='+ (currentTime - 600000) + '&endTs=' + currentTime + '&limit=60&agg=AVG');
+			xhttp.setRequestHeader('Content-Type', 'application/json');
+			xhttp.setRequestHeader('X-Authorization', 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYW5kcm8ubWlnbGlvcmU5NEBnbWFpbC5jb20iLCJzY29wZXMiOlsiVEVOQU5UX0FETUlOIl0sInVzZXJJZCI6ImY1ZDk0ZTEwLTY5NTQtMTFlYS04NzUxLWYxYjk3N2E0ZWFjNCIsImZpcnN0TmFtZSI6IkFsZXNzYW5kcm8iLCJsYXN0TmFtZSI6Ik1pZ2xpb3JlIiwiZW5hYmxlZCI6dHJ1ZSwicHJpdmFjeVBvbGljeUFjY2VwdGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiZjViODBhNzAtNjk1NC0xMWVhLTg3NTEtZjFiOTc3YTRlYWM0IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCIsImlzcyI6ImNsb3VkLnRoaW5nc2JvYXJkLmlvIiwiaWF0IjoxNTg2NDM2Nzg1LCJleHAiOjE1ODgyMzY3ODV9.lhE6yPWBqIu7Xk68icyU8sO8FJBrg3EnGxFuDc7BNTC1nfXzKpfp0t4VKEZsBn49A_3AgTPZ50EQigNhugWnqA');
+			xhttp.send();
+			xhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					var response = JSON.parse(this.responseText);
+
+
+					var int = response.windIntensity;
+					var dev = response.device;
+					
+
+					for (var i = 0; i < int.length; i++) {		
+
+							var table = document.getElementById("TabInt3");
+
+							var row = table.insertRow();
+
+							var cell0 = row.insertCell(0);
+							var cell1 = row.insertCell(1);
+							var cell2 = row.insertCell(2);
+							var cell3 = row.insertCell(3);
+							
+								var date = new Date(int[i].ts);
+								var year = date.getFullYear();
+								var month = months[date.getMonth()];
+								var day = date.getDate();
+								// Hours part from the timestamp
+								var hours = date.getHours();
+								// Minutes part from the timestamp
+								var minutes = date.getMinutes();
+								// Seconds part from the timestamp
+								var seconds = date.getSeconds();
+								var milliseconds = date.getMilliseconds();
+
+								// Will display time in 00:00:00 format
+								var formattedTime = day + " " + month + " " + year + " " + hours + ' : ' + minutes + 'm : ' + seconds + "s : " + milliseconds + "ms";
+								
+								
+								cell1.innerHTML = Number(int[i].ts);
+								cell2.innerHTML = formattedTime;
+								cell3.innerHTML = int[i].value + "m/s";
+								cell0.innerHTML = dev[i].value;
+								
+
+						}
+
+						console.log(response);
+
+					
+
+				}
+
+			};
+
+			//Device 2
+			var xhttp2 = new XMLHttpRequest();
+			xhttp2.open('GET', 'http://cloud.thingsboard.io/api/plugins/telemetry/DEVICE/c514f480-78b5-11ea-b99e-a33d0c6d5511/values/timeseries?keys=temperature,humidity,windDirection,windIntensity,rainHeight,device&startTs='+ (currentTime - 600000) + '&endTs=' + currentTime + '&limit=60&agg=AVG');
+			xhttp2.setRequestHeader('Content-Type', 'application/json');
+			xhttp2.setRequestHeader('X-Authorization', 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYW5kcm8ubWlnbGlvcmU5NEBnbWFpbC5jb20iLCJzY29wZXMiOlsiVEVOQU5UX0FETUlOIl0sInVzZXJJZCI6ImY1ZDk0ZTEwLTY5NTQtMTFlYS04NzUxLWYxYjk3N2E0ZWFjNCIsImZpcnN0TmFtZSI6IkFsZXNzYW5kcm8iLCJsYXN0TmFtZSI6Ik1pZ2xpb3JlIiwiZW5hYmxlZCI6dHJ1ZSwicHJpdmFjeVBvbGljeUFjY2VwdGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiZjViODBhNzAtNjk1NC0xMWVhLTg3NTEtZjFiOTc3YTRlYWM0IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCIsImlzcyI6ImNsb3VkLnRoaW5nc2JvYXJkLmlvIiwiaWF0IjoxNTg2NDM2Nzg1LCJleHAiOjE1ODgyMzY3ODV9.lhE6yPWBqIu7Xk68icyU8sO8FJBrg3EnGxFuDc7BNTC1nfXzKpfp0t4VKEZsBn49A_3AgTPZ50EQigNhugWnqA');
+			xhttp2.send();
+			xhttp2.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					var response = JSON.parse(this.responseText);
+
+
+					var int = response.windIntensity;
+					var dev = response.device;
+					
+					for (var i = 0; i < int.length; i++) {		
+
+							var table = document.getElementById("TabInt3");
+
+							var row = table.insertRow();
+
+							var cell0 = row.insertCell(0);
+							var cell1 = row.insertCell(1);
+							var cell2 = row.insertCell(2);
+							var cell3 = row.insertCell(3);
+							
+								var date = new Date(int[i].ts);
+								var year = date.getFullYear();
+								var month = months[date.getMonth()];
+								var day = date.getDate();
+								// Hours part from the timestamp
+								var hours = date.getHours();
+								// Minutes part from the timestamp
+								var minutes = date.getMinutes();
+								// Seconds part from the timestamp
+								var seconds = date.getSeconds();
+								var milliseconds = date.getMilliseconds();
+
+								// Will display time in 00:00:00 format
+								var formattedTime = day + " " + month + " " + year + " " + hours + ' : ' + minutes + 'm : ' + seconds + "s : " + milliseconds + "ms";
+								
+								cell1.innerHTML = Number(int[i].ts);
+								cell2.innerHTML = formattedTime;
+								cell3.innerHTML = int[i].value + "%";
+								cell0.innerHTML = dev[i].value;
+							
+
+					}
+
+						console.log(response);
+
+					
+					
+
+				}
+
+			};
+
+
+		}
+
+		function LastHourRain() {
+			//Device 1
+			var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+			var currentTime = new Date().getTime();
+			var olderTime = currentTime - 3600000;
+
+
+            var xhttp = new XMLHttpRequest();
+			xhttp.open('GET', 'http://demo.thingsboard.io/api/plugins/telemetry/DEVICE/0cb57790-6954-11ea-9cdd-b3576b7d39f1/values/timeseries?keys=rainHeight,device&startTs='+ (currentTime - 600000) + '&endTs=' + currentTime + '&limit=60&agg=AVG');
+			xhttp.setRequestHeader('Content-Type', 'application/json');
+			xhttp.setRequestHeader('X-Authorization', 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYW5kcm8ubWlnbGlvcmU5NEBnbWFpbC5jb20iLCJzY29wZXMiOlsiVEVOQU5UX0FETUlOIl0sInVzZXJJZCI6IjAzN2RiMjAwLTY5NTQtMTFlYS1hNjhiLTdkMGVmMmE2ODJkMyIsImZpcnN0TmFtZSI6IkFsZXNzYW5kcm8iLCJsYXN0TmFtZSI6Ik1pZ2xpb3JlIiwiZW5hYmxlZCI6dHJ1ZSwicHJpdmFjeVBvbGljeUFjY2VwdGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMDM2ZmNmNTAtNjk1NC0xMWVhLWE2OGItN2QwZWYyYTY4MmQzIiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCIsImlzcyI6InRoaW5nc2JvYXJkLmlvIiwiaWF0IjoxNTg2NDM2NDY3LCJleHAiOjE1ODgyMzY0Njd9.gQLfSGaMvXkrjkBkYehrRZ4EEjRueFVuf1wjj6iz64eLYEsyv3qjK3-AQy8-Af8cUmObxvc6ytWcacVZ2bMxVw');
+			xhttp.send();
+			xhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					var response = JSON.parse(this.responseText);
+
+
+					var rain = response.rainHeight;
+					var dev = response.device;
+				
+
+					for (var i = 0; i < rain.length; i++) {		
+
+							var table = document.getElementById("TabRain");
+
+							var row = table.insertRow();
+
+							var cell0 = row.insertCell(0);
+							var cell1 = row.insertCell(1);
+							var cell2 = row.insertCell(2);
+							var cell3 = row.insertCell(3);
+							
+								var date = new Date(rain[i].ts);
+								var year = date.getFullYear();
+								var month = months[date.getMonth()];
+								var day = date.getDate();
+								// Hours part from the timestamp
+								var hours = date.getHours();
+								// Minutes part from the timestamp
+								var minutes = date.getMinutes();
+								// Seconds part from the timestamp
+								var seconds = date.getSeconds();
+								var milliseconds = date.getMilliseconds();
+
+								// Will display time in 00:00:00 format
+								var formattedTime = day + " " + month + " " + year + " " + hours + ' : ' + minutes + 'm : ' + seconds + "s : " + milliseconds + "ms";
+								
+								
+								cell1.innerHTML = Number(rain[i].ts);
+								cell2.innerHTML = formattedTime;
+								cell3.innerHTML = rain[i].value + "mm/h";
+								cell0.innerHTML = dev[i].value;
+								
+
+						}
+
+						console.log(response);
+
+					
+					
+
+				}
+
+			};
+
+			//Device 2
+			var xhttp2 = new XMLHttpRequest();
+			xhttp2.open('GET', 'http://demo.thingsboard.io/api/plugins/telemetry/DEVICE/0cb80fa0-6954-11ea-9cdd-b3576b7d39f1/values/timeseries?keys=rainHeight,device&startTs='+ (currentTime - 600000) + '&endTs=' + currentTime + '&limit=60&agg=AVG');
+			xhttp2.setRequestHeader('Content-Type', 'application/json');
+			xhttp2.setRequestHeader('X-Authorization', 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYW5kcm8ubWlnbGlvcmU5NEBnbWFpbC5jb20iLCJzY29wZXMiOlsiVEVOQU5UX0FETUlOIl0sInVzZXJJZCI6IjAzN2RiMjAwLTY5NTQtMTFlYS1hNjhiLTdkMGVmMmE2ODJkMyIsImZpcnN0TmFtZSI6IkFsZXNzYW5kcm8iLCJsYXN0TmFtZSI6Ik1pZ2xpb3JlIiwiZW5hYmxlZCI6dHJ1ZSwicHJpdmFjeVBvbGljeUFjY2VwdGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMDM2ZmNmNTAtNjk1NC0xMWVhLWE2OGItN2QwZWYyYTY4MmQzIiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCIsImlzcyI6InRoaW5nc2JvYXJkLmlvIiwiaWF0IjoxNTg2NDM2NDY3LCJleHAiOjE1ODgyMzY0Njd9.gQLfSGaMvXkrjkBkYehrRZ4EEjRueFVuf1wjj6iz64eLYEsyv3qjK3-AQy8-Af8cUmObxvc6ytWcacVZ2bMxVw');
+			xhttp2.send();
+			xhttp2.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					var response = JSON.parse(this.responseText);
+
+
+					var rain = response.rainHeight;
+					var dev = response.device;
+					
+
+					for (var i = 0; i < rain.length; i++) {		
+
+							var table = document.getElementById("TabRain");
+
+							var row = table.insertRow();
+
+							var cell0 = row.insertCell(0);
+							var cell1 = row.insertCell(1);
+							var cell2 = row.insertCell(2);
+							var cell3 = row.insertCell(3);
+							
+								var date = new Date(rain[i].ts);
+								var year = date.getFullYear();
+								var month = months[date.getMonth()];
+								var day = date.getDate();
+								// Hours part from the timestamp
+								var hours = date.getHours();
+								// Minutes part from the timestamp
+								var minutes = date.getMinutes();
+								// Seconds part from the timestamp
+								var seconds = date.getSeconds();
+								var milliseconds = date.getMilliseconds();
+
+								// Will display time in 00:00:00 format
+								var formattedTime = day + " " + month + " " + year + " " + hours + ' : ' + minutes + 'm : ' + seconds + "s : " + milliseconds + "ms";
+								
+								
+								cell1.innerHTML = Number(rain[i].ts);
+								cell2.innerHTML = formattedTime;
+								cell3.innerHTML = rain[i].value + "mm/h";
+								cell0.innerHTML = dev[i].value;
+								
+
+					}
+
+						console.log(response);
+
+					
+
+				}
+
+			};
+
+
+		}
+
+		
+		function LastHourRain2() {
+			//Device 1
+			var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+			var currentTime = new Date().getTime();
+			var olderTime = currentTime - 3600000;
+
+
+            var xhttp = new XMLHttpRequest();
+			xhttp.open('GET', 'http://demo.thingsboard.io/api/plugins/telemetry/DEVICE/fbe5d470-70e0-11ea-ad02-b3576b7d39f1/values/timeseries?keys=rainHeight,device&startTs='+ (currentTime - 600000) + '&endTs=' + currentTime + '&limit=60&agg=AVG');
+			xhttp.setRequestHeader('Content-Type', 'application/json');
+			xhttp.setRequestHeader('X-Authorization', 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYW5kcm8ubWlnbGlvcmU5NEBnbWFpbC5jb20iLCJzY29wZXMiOlsiVEVOQU5UX0FETUlOIl0sInVzZXJJZCI6IjAzN2RiMjAwLTY5NTQtMTFlYS1hNjhiLTdkMGVmMmE2ODJkMyIsImZpcnN0TmFtZSI6IkFsZXNzYW5kcm8iLCJsYXN0TmFtZSI6Ik1pZ2xpb3JlIiwiZW5hYmxlZCI6dHJ1ZSwicHJpdmFjeVBvbGljeUFjY2VwdGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMDM2ZmNmNTAtNjk1NC0xMWVhLWE2OGItN2QwZWYyYTY4MmQzIiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCIsImlzcyI6InRoaW5nc2JvYXJkLmlvIiwiaWF0IjoxNTg2NDM2NDY3LCJleHAiOjE1ODgyMzY0Njd9.gQLfSGaMvXkrjkBkYehrRZ4EEjRueFVuf1wjj6iz64eLYEsyv3qjK3-AQy8-Af8cUmObxvc6ytWcacVZ2bMxVw');
+			xhttp.send();
+			xhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					var response = JSON.parse(this.responseText);
+
+
+					var rain = response.rainHeight;
+					var dev = response.device;
+				
+
+					for (var i = 0; i < rain.length; i++) {		
+
+							var table = document.getElementById("TabRain2");
+
+							var row = table.insertRow();
+
+							var cell0 = row.insertCell(0);
+							var cell1 = row.insertCell(1);
+							var cell2 = row.insertCell(2);
+							var cell3 = row.insertCell(3);
+							
+								var date = new Date(rain[i].ts);
+								var year = date.getFullYear();
+								var month = months[date.getMonth()];
+								var day = date.getDate();
+								// Hours part from the timestamp
+								var hours = date.getHours();
+								// Minutes part from the timestamp
+								var minutes = date.getMinutes();
+								// Seconds part from the timestamp
+								var seconds = date.getSeconds();
+								var milliseconds = date.getMilliseconds();
+
+								// Will display time in 00:00:00 format
+								var formattedTime = day + " " + month + " " + year + " " + hours + ' : ' + minutes + 'm : ' + seconds + "s : " + milliseconds + "ms";
+								
+								
+								cell1.innerHTML = Number(rain[i].ts);
+								cell2.innerHTML = formattedTime;
+								cell3.innerHTML = rain[i].value + "mm/h";
+								cell0.innerHTML = dev[i].value;
+								
+
+						}
+
+						console.log(response);
+
+					
+					
+
+				}
+
+			};
+			}
+			
+			
+			function LastHourRain3() {
+			//Device 1
+			var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+			var currentTime = new Date().getTime();
+			var olderTime = currentTime - 3600000;
+
+
+            var xhttp = new XMLHttpRequest();
+			xhttp.open('GET', 'http://cloud.thingsboard.io/api/plugins/telemetry/DEVICE/0ecb9900-7d6e-11ea-b99e-a33d0c6d5511/values/timeseries?keys=rainHeight,device&startTs='+ (currentTime - 600000) + '&endTs=' + currentTime + '&limit=60&agg=AVG');
+			xhttp.setRequestHeader('Content-Type', 'application/json');
+			xhttp.setRequestHeader('X-Authorization', 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYW5kcm8ubWlnbGlvcmU5NEBnbWFpbC5jb20iLCJzY29wZXMiOlsiVEVOQU5UX0FETUlOIl0sInVzZXJJZCI6ImY1ZDk0ZTEwLTY5NTQtMTFlYS04NzUxLWYxYjk3N2E0ZWFjNCIsImZpcnN0TmFtZSI6IkFsZXNzYW5kcm8iLCJsYXN0TmFtZSI6Ik1pZ2xpb3JlIiwiZW5hYmxlZCI6dHJ1ZSwicHJpdmFjeVBvbGljeUFjY2VwdGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiZjViODBhNzAtNjk1NC0xMWVhLTg3NTEtZjFiOTc3YTRlYWM0IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCIsImlzcyI6ImNsb3VkLnRoaW5nc2JvYXJkLmlvIiwiaWF0IjoxNTg2NDM2Nzg1LCJleHAiOjE1ODgyMzY3ODV9.lhE6yPWBqIu7Xk68icyU8sO8FJBrg3EnGxFuDc7BNTC1nfXzKpfp0t4VKEZsBn49A_3AgTPZ50EQigNhugWnqA');
+			xhttp.send();
+			xhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					var response = JSON.parse(this.responseText);
+
+
+					var rain = response.rainHeight;
+					var dev = response.device;
+				
+
+					for (var i = 0; i < rain.length; i++) {		
+
+							var table = document.getElementById("TabRain3");
+
+							var row = table.insertRow();
+
+							var cell0 = row.insertCell(0);
+							var cell1 = row.insertCell(1);
+							var cell2 = row.insertCell(2);
+							var cell3 = row.insertCell(3);
+							
+								var date = new Date(rain[i].ts);
+								var year = date.getFullYear();
+								var month = months[date.getMonth()];
+								var day = date.getDate();
+								// Hours part from the timestamp
+								var hours = date.getHours();
+								// Minutes part from the timestamp
+								var minutes = date.getMinutes();
+								// Seconds part from the timestamp
+								var seconds = date.getSeconds();
+								var milliseconds = date.getMilliseconds();
+
+								// Will display time in 00:00:00 format
+								var formattedTime = day + " " + month + " " + year + " " + hours + ' : ' + minutes + 'm : ' + seconds + "s : " + milliseconds + "ms";
+								
+								
+								cell1.innerHTML = Number(rain[i].ts);
+								cell2.innerHTML = formattedTime;
+								cell3.innerHTML = rain[i].value + "mm/h";
+								cell0.innerHTML = dev[i].value;
+								
+
+						}
+
+						console.log(response);
+
+					
+					
+
+				}
+
+			};
+
+			//Device 2
+			var xhttp2 = new XMLHttpRequest();
+			xhttp2.open('GET', 'http://cloud.thingsboard.io/api/plugins/telemetry/DEVICE/c514f480-78b5-11ea-b99e-a33d0c6d5511/values/timeseries?keys=rainHeight,device&startTs='+ (currentTime - 600000) + '&endTs=' + currentTime + '&limit=60&agg=AVG');
+			xhttp2.setRequestHeader('Content-Type', 'application/json');
+			xhttp2.setRequestHeader('X-Authorization', 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYW5kcm8ubWlnbGlvcmU5NEBnbWFpbC5jb20iLCJzY29wZXMiOlsiVEVOQU5UX0FETUlOIl0sInVzZXJJZCI6ImY1ZDk0ZTEwLTY5NTQtMTFlYS04NzUxLWYxYjk3N2E0ZWFjNCIsImZpcnN0TmFtZSI6IkFsZXNzYW5kcm8iLCJsYXN0TmFtZSI6Ik1pZ2xpb3JlIiwiZW5hYmxlZCI6dHJ1ZSwicHJpdmFjeVBvbGljeUFjY2VwdGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiZjViODBhNzAtNjk1NC0xMWVhLTg3NTEtZjFiOTc3YTRlYWM0IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCIsImlzcyI6ImNsb3VkLnRoaW5nc2JvYXJkLmlvIiwiaWF0IjoxNTg2NDM2Nzg1LCJleHAiOjE1ODgyMzY3ODV9.lhE6yPWBqIu7Xk68icyU8sO8FJBrg3EnGxFuDc7BNTC1nfXzKpfp0t4VKEZsBn49A_3AgTPZ50EQigNhugWnqA');
+			xhttp2.send();
+			xhttp2.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					var response = JSON.parse(this.responseText);
+
+
+					var rain = response.rainHeight;
+					var dev = response.device;
+					
+
+					for (var i = 0; i < rain.length; i++) {		
+
+							var table = document.getElementById("TabRain3");
+
+							var row = table.insertRow();
+
+							var cell0 = row.insertCell(0);
+							var cell1 = row.insertCell(1);
+							var cell2 = row.insertCell(2);
+							var cell3 = row.insertCell(3);
+							
+								var date = new Date(rain[i].ts);
+								var year = date.getFullYear();
+								var month = months[date.getMonth()];
+								var day = date.getDate();
+								// Hours part from the timestamp
+								var hours = date.getHours();
+								// Minutes part from the timestamp
+								var minutes = date.getMinutes();
+								// Seconds part from the timestamp
+								var seconds = date.getSeconds();
+								var milliseconds = date.getMilliseconds();
+
+								// Will display time in 00:00:00 format
+								var formattedTime = day + " " + month + " " + year + " " + hours + ' : ' + minutes + 'm : ' + seconds + "s : " + milliseconds + "ms";
+								
+								
+								cell1.innerHTML = Number(rain[i].ts);
+								cell2.innerHTML = formattedTime;
+								cell3.innerHTML = rain[i].value + "mm/h";
+								cell0.innerHTML = dev[i].value;
+								
+
+					}
+
+						console.log(response);
+
+					
+
+				}
+
+			};
+
+
+		}
+
+    </script>
+
+</head>
+<body background="back3.jpg" onload="LastHourTemp(); LastHourHum(); LastHourDir(); LastHourInt(); LastHourRain(); LastHourTemp2();LastHourHum2();LastHourDir2();LastHourInt2();LastHourRain2();LastHourTemp3();LastHourHum3();LastHourDir3();LastHourInt3();LastHourRain3()" >
+	
+	<button id="start1" onclick="Device1Live()">START</button>
+	<button id="stop1">STOP</button>
+	<button id="start2" onclick="Device2Live()">START</button>
+	<button id="stop2">STOP</button>
+	<button id="start3" onclick="Device3Live()">START</button>
+	<button id="stop3">STOP</button>
+	<button id="start4" onclick="Device4Live()">START</button>
+	<button id="stop4">STOP</button>
+	<button id="start5" onclick="Device5Live()">START</button>
+	<button id="stop5">STOP</button>
+	<button id="start6" onclick="Device6Live()">START</button>
+	<button id="stop6">STOP</button>
+	<button id="start7" onclick="Device7Live()">START</button>
+	<button id="stop7">STOP</button>
+<div id="live1">DEVICE 1
+<p id="tp"></p>
+<p id="humidity"></p>
+<p id="wd"></p>
+<p id="wi"></p>
+<p id="rh"></p>
+</div>
+
+<div id="live2">DEVICE 2
+<p id="tp2"></p>
+<p id="humidity2"></p>
+<p id="wd2"></p>
+<p id="wi2"></p>
+<p id="rh2"></p>
+</div>
+
+
+<div id="live3">GATEWAY
+<p id="tp3"></p>
+<p id="humidity3"></p>
+<p id="wd3"></p>
+<p id="wi3"></p>
+<p id="rh3"></p>
+</div>
+
+<div id="live4">REAL SENSOR 1
+<p id="tp4"></p>
+<p id="humidity4"></p>
+<p id="wd4"></p>
+<p id="wi4"></p>
+<p id="rh4"></p>
+</div>
+
+<div id="live5">REAL SENSOR 2
+<p id="tp5"></p>
+<p id="humidity5"></p>
+<p id="wd5"></p>
+<p id="wi5"></p>
+<p id="rh5"></p>
+</div>
+
+<div id="live6">LoRaWAN Station 1
+<p id="tp6"></p>
+<p id="humidity6"></p>
+<p id="wd6"></p>
+<p id="wi6"></p>
+<p id="rh6"></p>
+</div>
+
+<div id="live7">LoRaWAN Station 2
+<p id="tp7"></p>
+<p id="humidity7"></p>
+<p id="wd7"></p>
+<p id="wi7"></p>
+<p id="rh7"></p>
+</div>
+
+
+<div style="position: absolute; top: 250px; margin: 10px;">
+<div class="container">
+  <img src="home2.png" alt="Snow">
+  <button class="btn"><a href="#TabTemp">Fisrt Table</a></button>
+
+</div>
+
+<div class="container">
+  <img src="riot.png" alt="Snow">
+  <button class="btn"><a href="#TabTemp2">Second Table</a></button>
+</div>
+
+
+<div class="container">
+  <img src="ttn2.png" alt="Snow">
+  <button class="btn"><a href="#TabTemp3">Third Table</a></button>
+</div>
+	<h3 style="text-align: left; position: relative;">Table of values for the last hour for temperature   <button onclick="sortTableT()">Temperature</button></h3>	
+	
+
+	<table id="TabTemp">
+		<tr>
+			<th>Device</th>
+			<th>ts</th>
+			<th style="width: 25%">Timestamp</th>
+			<th>Temperature</th>
+			
+		</tr>
+	</table>
+
+
+	
+	<div style="position: relative; margin: 10px;">
+		<h3 style="text-align: left; position: relative;">Table of values for the last hour for humidity   <button onclick="sortTableH()">Humidity</button></h3>
+		
+
+		<table id="TabHum">
+			<tr>
+				<th>Device</th>
+				<th>ts</th>
+				<th style="width: 25%">Timestamp</th>
+				<th>Humidity</th>
+			</tr>
+		</table>
+
+		
+	</div>
+
+		<div style="position: relative; margin: 10px;">
+		<h3 style="text-align: left; position: relative;">Table of values for the last hour for Wind Direction   <button onclick="sortTableD()">Wind Direction</button></h3>
+		
+
+		<table id="TabDir">
+			<tr>
+				<th>Device</th>
+				<th>ts</th>
+				<th style="width: 25%">Timestamp</th>
+				<th>Wind Direction</th>
+			</tr>
+		</table>
+
+		
+	</div>
+
+		<div style="position: relative; margin: 10px;">
+		<h3 style="text-align: left; position: relative;">Table of values for the last hour for Wind Intensity   <button onclick="sortTableI()">Wind Intensity</button></h3>
+		
+
+		<table id="TabInt">
+			<tr>
+				<th>Device</th>
+				<th>ts</th>
+				<th style="width: 25%">Timestamp</th>
+				<th>Wind Intensity</th>
+			</tr>
+		</table>
+
+		
+	</div>
+
+		<div style="position: relative; margin: 10px;">
+		<h3 style="text-align: left; position: relative;">Table of values for the last hour for Rain Height   <button onclick="sortTableR()">Rain Height</button></h3>
+		
+
+		<table id="TabRain">
+			<tr>
+				<th>Device</th>
+				<th>ts</th>
+				<th style="width: 25%">Timestamp</th>
+				<th>Rain Height</th>
+			</tr>
+		</table>
+
+		
+	</div>
+	
+	<div style="position: relative; margin: 10px;">
+		<h3 style="text-align: left; position: relative;">RIOT-OS Table of values for the last hour for temperature   <button onclick="sortTableT()">Temperature</button></h3>
+		
+
+		<table id="TabTemp2">
+			<tr>
+				<th>Device</th>
+				<th>ts</th>
+				<th style="width: 25%">Timestamp</th>
+				<th>Temperature</th>
+			</tr>
+		</table>
+
+		
+	</div>
+	
+	<div style="position: relative; margin: 10px;">
+		<h3 style="text-align: left; position: relative;">RIOT-OS Table of values for the last hour for humidity   <button onclick="sortTableT()">Humidity</button></h3>
+		
+
+		<table id="TabHum2">
+			<tr>
+				<th>Device</th>
+				<th>ts</th>
+				<th style="width: 25%">Timestamp</th>
+				<th>Humidity</th>
+			</tr>
+		</table>
+
+		
+	</div>
+
+		<div style="position: relative; margin: 10px;">
+		<h3 style="text-align: left; position: relative;">RIOT-OS Table of values for the last hour for Wind Direction   <button onclick="sortTableD()">Wind Direction</button></h3>
+		
+
+		<table id="TabDir2">
+			<tr>
+				<th>Device</th>
+				<th>ts</th>
+				<th style="width: 25%">Timestamp</th>
+				<th>Wind Direction</th>
+			</tr>
+		</table>
+
+		
+	</div>
+	
+	<div style="position: relative; margin: 10px;">
+		<h3 style="text-align: left; position: relative;">RIOT-OS Table of values for the last hour for Wind Intensity   <button onclick="sortTableI()">Wind Intensity</button></h3>
+		
+
+		<table id="TabInt2">
+			<tr>
+				<th>Device</th>
+				<th>ts</th>
+				<th style="width: 25%">Timestamp</th>
+				<th>Wind Intensity</th>
+			</tr>
+		</table>
+
+		
+	</div>
+	
+	<div style="position: relative; margin: 10px;">
+		<h3 style="text-align: left; position: relative;">RIOT-OS Table of values for the last hour for Rain Height   <button onclick="sortTableR()">Rain Height</button></h3>
+		
+
+		<table id="TabRain2">
+			<tr>
+				<th>Device</th>
+				<th>ts</th>
+				<th style="width: 25%">Timestamp</th>
+				<th>Rain Height</th>
+			</tr>
+		</table>
+
+		
+	</div>
+	
+	
+	
+	<div style="position: relative; margin: 10px;">
+		<h3 style="text-align: left; position: relative;">TTN Table of values for the last hour for temperature   <button onclick="sortTableT2()">Temperature</button></h3>
+		
+
+		<table id="TabTemp3">
+			<tr>
+				<th>Device</th>
+				<th>ts</th>
+				<th style="width: 25%">Timestamp</th>
+				<th>Temperature</th>
+			</tr>
+		</table>
+
+		
+	</div>
+	
+	<div style="position: relative; margin: 10px;">
+		<h3 style="text-align: left; position: relative;">TTN Table of values for the last hour for humidity   <button onclick="sortTableH2()">Rain Height</button></h3>
+		
+
+		<table id="TabHum3">
+			<tr>
+				<th>Device</th>
+				<th>ts</th>
+				<th style="width: 25%">Timestamp</th>
+				<th>Humidity</th>
+			</tr>
+		</table>
+
+		
+	</div>
+
+		<div style="position: relative; margin: 10px;">
+		<h3 style="text-align: left; position: relative;">TTN Table of values for the last hour for Wind Direction   <button onclick="sortTableD2()">Wind Direction</button></h3>
+		
+
+		<table id="TabDir3">
+			<tr>
+				<th>Device</th>
+				<th>ts</th>
+				<th style="width: 25%">Timestamp</th>
+				<th>Wind Direction</th>
+			</tr>
+		</table>
+
+		
+	</div>
+	
+	<div style="position: relative; margin: 10px;">
+		<h3 style="text-align: left; position: relative;">TTN Table of values for the last hour for Wind Intensity   <button onclick="sortTableI2()">Wind Intensity</button></h3>
+		
+
+		<table id="TabInt3">
+			<tr>
+				<th>Device</th>
+				<th>ts</th>
+				<th style="width: 25%">Timestamp</th>
+				<th>Wind Intensity</th>
+			</tr>
+		</table>
+
+		
+	</div>
+	
+	<div style="position: relative; margin: 10px;">
+		<h3 style="text-align: left; position: relative;">TTN Table of values for the last hour for Rain Height   <button onclick="sortTableR2()">Rain Height</button></h3>
+		
+
+		<table id="TabRain3">
+			<tr>
+				<th>Device</th>
+				<th>ts</th>
+				<th style="width: 25%">Timestamp</th>
+				<th>Rain Height</th>
+			</tr>
+		</table>
+
+		
+	</div>
+
+</div>
+
+
+
+
+</body>
+</html>
