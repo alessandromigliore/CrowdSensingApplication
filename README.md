@@ -1,3 +1,15 @@
+# Crowd Sensing Application
+Fourth Assignment - Alessandro Migliore 1613614
+
+Develop an HTML5 application using the Generic Sensor API that collects data form the accelerator sensor of the mobile phone.
+
+Website to be used with the mobile phone to use the accelerometer : https://alessandromigliore.github.io/accellerometer.github.io/
+
+Linkedin-Blog: https://www.linkedin.com/pulse/crowd-sensing-application-alessandro-migliore/
+
+Youtube: https://www.youtube.com/watch?v=yWzAKg5vnPE
+
+
 # LoRaWAN Station
 Third Assignment - Alessandro Migliore 1613614
 
