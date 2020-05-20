@@ -1,3 +1,13 @@
+# LoRaWAN Station
+Third Assignment - Alessandro Migliore 1613614
+
+Manage a Lorawan-based Iot network through The Things Network
+
+Linkedin-Blog: https://www.linkedin.com/pulse/manage-lorawan-based-iot-network-through-things-alessandro-migliore/
+
+Youtube: https://www.youtube.com/watch?v=tNySeKRfnMs
+
+
 # RIOT-OS Station 
 Second Asssignment - Alessandro Migliore 1613614
 use the native emulator of RIOT-OS to run your stations and generate values over MQTT-SN that need to arrive to the cloud via the MQTT.
@@ -6,7 +16,7 @@ Linkedin-Blog: https://www.linkedin.com/pulse/native-emulator-riot-os-run-your-s
 
 Youtube: https://www.youtube.com/watch?v=KrthcKJgHaA
 
-#SOURCES
+# SOURCES
 
 Eclipse paho MQTT-SN client: https://github.com/eclipse/paho.mqtt-sn.embedded-c
 
@@ -34,5 +44,5 @@ Linkedin-Blog: https://www.linkedin.com/pulse/cloud-based-iot-system-collects-in
 Youtube : https://www.youtube.com/watch?v=F1R9aitPtrc
 
 
-#Acknowledgments
+# Acknowledgments
 Collection of assignments for the Internet of Things course of the MSc in Engineering in Computer Science at Sapienza Università di Roma
